@@ -1,7 +1,8 @@
-package kr.yangbob.memoapp
+package kr.yangbob.memoapp.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import kr.yangbob.memoapp.R
 
 class MainActivity : AppCompatActivity() {
 
