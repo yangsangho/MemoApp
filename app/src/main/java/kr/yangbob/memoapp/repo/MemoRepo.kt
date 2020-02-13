@@ -9,6 +9,7 @@ class MemoRepo(memoDB: MemoDatabase) {
     private val memoDao: MemoDao = memoDB.getMemoDao()
 
     fun getAllMemo(): List<Memo> = runBlocking { memoDao.getAll() }
-    fun getMemoFromId(id: Int): Memo = runBlocking { memoDao.getFromId(id) }
+    fun getMemoFromId(id: Int): Memo? = runBlocking { memoDao.getFromId(id) }
     fun insertMemo(memo: Memo) = runBlocking { memoDao.insert(memo) }
+    fun deleteMemo(memo: Memo) = runBlocking { memoDao.delete(memo) }
 }
