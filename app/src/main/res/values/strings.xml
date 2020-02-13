@@ -3,4 +3,8 @@
     <string name="main_appbar_title">All notes</string>
     <string name="main_no_item_msg1">No notes</string>
     <string name="main_no_item_msg2">Tap the Add button to create a note.</string>
+    <plurals name="main_appbar_notes">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
 </resources>

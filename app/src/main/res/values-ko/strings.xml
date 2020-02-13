@@ -4,4 +4,7 @@
     <string name="main_appbar_title">모든 노트</string>
     <string name="main_no_item_msg1">노트가 없어요</string>
     <string name="main_no_item_msg2">노트를 작성하려면 추가 버튼을 누르세요.</string>
+    <plurals name="main_appbar_notes">
+        <item quantity="other">%d notes</item>
+    </plurals>
 </resources>
