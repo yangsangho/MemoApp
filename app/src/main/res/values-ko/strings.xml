@@ -7,4 +7,9 @@
     <plurals name="main_appbar_notes">
         <item quantity="other">%d notes</item>
     </plurals>
+    <string name="menu_save_title">저장</string>
+    <string name="menu_attach_title">첨부</string>
+    <string name="menu_url_title">URL</string>
+    <string name="menu_gallery_title">갤러리</string>
+    <string name="menu_camera_title">카메라</string>
 </resources>

@@ -7,4 +7,9 @@
         <item quantity="one">%d note</item>
         <item quantity="other">%d notes</item>
     </plurals>
+    <string name="menu_save_title">Save</string>
+    <string name="menu_attach_title">Attach</string>
+    <string name="menu_camera_title">Camera</string>
+    <string name="menu_gallery_title">Gallery</string>
+    <string name="menu_url_title">URL</string>
 </resources>

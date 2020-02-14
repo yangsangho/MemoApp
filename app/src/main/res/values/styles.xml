@@ -1,21 +1,27 @@
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="android:colorEdgeEffect">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" >
-        <item name="android:textColor">@color/black</item>
+    <style name="TitleTextAppearance" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/app_bar_title_normal_size</item> <!-- Default for portrait is 20sp and for landscape 14sp-->
     </style>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+<!--
+    <style name="AppTheme.NoActionBar">
+    </style>
+-->
+
+<!--    <style name="AppTheme.AppBarOverlay" parent="AppTheme" >-->
+<!--        <item name="android:textColor">@color/black</item>-->
+<!--    </style>-->
+
+    
+    
 </resources>

@@ -2,7 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainMotionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -13,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -37,22 +35,24 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/main_appbar_title"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/app_bar_title_size" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="노트 1개" />
+                    android:text="노트 1개"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
+                app:titleTextAppearance="@style/TitleTextAppearance"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -89,9 +89,9 @@
                 android:textSize="@dimen/emphasis_text_size" />
 
             <TextView
-                android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/main_no_item_msg2" />
 
         </LinearLayout>

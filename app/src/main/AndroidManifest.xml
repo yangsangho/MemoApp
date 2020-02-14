@@ -13,8 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.CrudActivity"/>
         <activity android:name=".view.MainActivity"
-            android:label="@string/main_appbar_title"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/main_appbar_title">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

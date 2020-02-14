@@ -1,13 +1,12 @@
 package kr.yangbob.memoapp.view
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
@@ -16,13 +15,15 @@ import kr.yangbob.memoapp.R
 import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var titleTextView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
 
-        val titleTextView: TextView = toolbar.javaClass.getDeclaredField("mTitleTextView").let {
+        titleTextView = toolbar.javaClass.getDeclaredField("mTitleTextView").let {
             it.isAccessible = true
             it.get(toolbar) as TextView
         }
@@ -34,11 +35,6 @@ class MainActivity : AppCompatActivity() {
                 collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
             collapsingToolbarLayout.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 
-            titleTextView.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                resources.getDimension(R.dimen.app_bar_title_normal_size)
-            )
-
             val appbarLayoutParams = appBar.layoutParams
             appbarLayoutParams.height = AppBarLayout.LayoutParams.WRAP_CONTENT
             appBar.layoutParams = appbarLayoutParams
@@ -46,18 +42,18 @@ class MainActivity : AppCompatActivity() {
             noteRecycler.layoutManager =
                 StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         } else {
-            setScrollEvent(titleTextView)
+            setScrollEvent()
             noteRecycler.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
         noteRecycler.adapter = NoteListAdapter(listOf())
 
         addBtn.setOnClickListener {
-            Toast.makeText(this, "Click Add Button", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, CrudActivity::class.java))
         }
     }
 
-    private fun setScrollEvent(titleTextView: TextView) {
+    private fun setScrollEvent() {
         val contentLayoutParams: ViewGroup.LayoutParams = contentLayout.layoutParams
         val appHeight: Int = Point().let {
             windowManager.defaultDisplay.getSize(it)
