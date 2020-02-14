@@ -6,9 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.yangbob.memoapp.R
 
-class NoteListAdapter(private val list: List<String>) : RecyclerView.Adapter<NoteViewHolder>(){
+class NoteListAdapter(private val list: List<String>) : RecyclerView.Adapter<NoteViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder =
-        NoteViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_note, parent, false))
+        NoteViewHolder(
+                LayoutInflater.from(parent.context).inflate(
+                        R.layout.list_item_note,
+                        parent,
+                        false
+                                                           )
+                      )
 
     override fun getItemCount(): Int = list.size
 
@@ -17,8 +23,8 @@ class NoteListAdapter(private val list: List<String>) : RecyclerView.Adapter<Not
     }
 }
 
-class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view){
-    fun bind(str: String){
+class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    fun bind(str: String) {
 
     }
 }

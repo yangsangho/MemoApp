@@ -12,4 +12,6 @@
     <string name="menu_url_title">URL</string>
     <string name="menu_gallery_title">갤러리</string>
     <string name="menu_camera_title">카메라</string>
+    <string name="menu_delete">삭제</string>
+    <string name="menu_edit">수정</string>
 </resources>

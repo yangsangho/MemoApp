@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Memo(
-    var title: String,
-    var body: String,
-    val pictures: MutableList<String>? = null,
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null
-)
+        var title: String? = null,
+        var body: String? = null,
+        val pictures: MutableList<String>? = null,
+        @PrimaryKey(autoGenerate = true)
+        val id: Int? = null
+               )

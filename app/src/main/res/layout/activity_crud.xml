@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/crudMotionLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/scene_crud"
-    tools:showPaths="true"
-    tools:context=".view.CrudActivity">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="kr.yangbob.memoapp.viewmodel.CrudViewModel" />
+    </data>
+    <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/crudMotionLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:titleTextAppearance="@style/TitleTextAppearance"
-        android:background="@drawable/border_bottom" />
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/scene_crud"
+        tools:showPaths="true"
+        tools:context=".view.CrudActivity">
 
-    <ScrollView
-        android:id="@+id/writeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
-
-        <LinearLayout
-            android:id="@+id/linear"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            app:titleTextAppearance="@style/TitleTextAppearance"
+            android:background="@drawable/border_bottom" />
 
-            <EditText
-                android:id="@+id/edit1"
+        <ScrollView
+            android:id="@+id/writeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:id="@+id/linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="제목"
-                android:maxLines="1"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <EditText
-                android:id="@+id/edit2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@android:color/transparent"
-                android:hint="본문"
-                android:inputType="textMultiLine" />
-        </LinearLayout>
-    </ScrollView>
+                <EditText
+                    android:id="@+id/editTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="제목"
+                    android:maxLines="1"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/imageRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"/>
+                <EditText
+                    android:id="@+id/editBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="본문"
+                    android:inputType="textMultiLine" />
+            </LinearLayout>
+        </ScrollView>
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imageRecycler"
+            android:nestedScrollingEnabled="true"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"/>
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

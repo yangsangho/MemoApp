@@ -23,7 +23,7 @@ class DatabaseTest : KoinTest {
     private val memoRepo: MemoRepo by inject()
     private val db: MemoDatabase by inject()
     private val testId = 3
-    private val testMemo = Memo("title", "body", mutableListOf("1234", "http:://url.com"), testId)
+    private val testMemo = Memo("title", "body", mutableListOf("content://media/external/images/media/4172", "http://url.com"), testId)
 
     @Before
     fun createDb() {

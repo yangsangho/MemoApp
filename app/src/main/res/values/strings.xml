@@ -12,4 +12,6 @@
     <string name="menu_camera_title">Camera</string>
     <string name="menu_gallery_title">Gallery</string>
     <string name="menu_url_title">URL</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
 </resources>
