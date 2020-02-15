@@ -1,90 +1,73 @@
 package kr.yangbob.memoapp.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.tedpark.tedpermission.rx2.TedRx2Permission
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.db.Memo
+import kr.yangbob.memoapp.db.checkEqual
 import kr.yangbob.memoapp.repo.MemoRepo
 import kr.yangbob.memoapp.repo.PictureUtil
 import java.io.File
 
 class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: PictureUtil) :
         ViewModel() {
-    private var chooseMenuId = R.menu.menu_add_and_edit
-    private lateinit var memo: Memo
-
-    val title = MutableLiveData<String>()
-    val body = MutableLiveData<String>()
-    private val imageList = MutableLiveData<MutableList<String>>()
-
-    fun getMemo(memoId: Int) {
-        memo = if (memoId == -1) {
-            Memo()
-        } else {
-            memoRepo.getMemoFromId(memoId)!!
-        }
-
-        imageList.value = mutableListOf()
-        memo.pictures?.also {
-            imageList.value?.addAll(it)
-        }
+    private enum class Mode {
+        Add, Detail, Edit
     }
 
-    fun getMenuId(): Int = chooseMenuId
+    private var isInit = false
+    private var curMode = Mode.Add
+    private var curMenuId = R.menu.menu_add_and_edit
+    private var memo: Memo = Memo()
+
+    val title = MutableLiveData<String>("")
+    val body = MutableLiveData<String>("")
+    private val imageList = MutableLiveData<List<String>>(listOf())
+
+    fun getMemo(memoId: Int) {
+        if (isInit) return
+        isInit = true
+
+        curMode = Mode.Detail
+        curMenuId = R.menu.menu_detail
+        memo = memoRepo.getMemoFromId(memoId)!!
+        title.value = memo.title
+        body.value = memo.text
+        imageList.value = memo.images
+    }
+
+    fun getMenuId(): Int = curMenuId
     fun createImageFile(): File = pictureUtil.createImageFile()
-    fun getImageList(): LiveData<MutableList<String>> = imageList
+    fun getImageList(): LiveData<List<String>> = imageList
     fun addPicture(uri: Uri) {
-        imageList.value?.add(uri.toString())
+        imageList.value = imageList.value!! + listOf(uri.toString())
     }
 
     fun addPicture(url: String) {
-        imageList.value?.add(url)
+        imageList.value = imageList.value!! + listOf(url)
     }
 
-    @SuppressLint("CheckResult")
-    fun checkPermissionAndRun(
-            context: Context,
-            permissionList: Array<String>,
-            run: () -> Unit
-                             ) {
-        if (!TedRx2Permission.isGranted(context, *permissionList)) {
-            val deniedList =
-                TedRx2Permission.getDeniedPermissions(context, *permissionList).toTypedArray()
-
-            var cntGranted = 0
-            var cntDenied = 0
-            TedRx2Permission.with(context)
-                    .setRationaleTitle("title")
-                    .setRationaleMessage("message") // "we need permission for read contact and find your location"
-                    .setPermissions(*deniedList)
-                    .request()
-                    .subscribe(
-                            { tedPermissionResult ->
-                                if (tedPermissionResult.isGranted) {
-                                    cntGranted++
-                                    if (cntGranted == deniedList.size) run()
-                                } else {
-                                    cntDenied++
-                                    if (cntGranted == (cntGranted + cntDenied)) {
-                                        Toast.makeText(
-                                                context,
-                                                "Permission Denied\n" + tedPermissionResult.deniedPermissions.toString(),
-                                                Toast.LENGTH_SHORT
-                                                      ).show()
-                                    }
-
-                                }
-                            },
-                            { }
-                              )
-        } else {
-            run()
-        }
+    fun save() {
+        memo.title = title.value!!
+        memo.text = body.value!!
+        memo.images = imageList.value!!
+        memoRepo.insertMemo(memo)
     }
+
+    fun toggleMenu() {
+        curMenuId = if (curMenuId == R.menu.menu_detail) R.menu.menu_add_and_edit
+        else R.menu.menu_detail
+    }
+
+    fun isAddMode(): Boolean = curMode == Mode.Add
+
+    fun hasChange(): Boolean = if (curMode == Mode.Add) {
+        !chkNullInputData()
+    } else {
+        !memo.checkEqual(title.value!!, body.value!!, imageList.value!!)
+    }
+
+    private fun chkNullInputData(): Boolean = title.value!!.isBlank() || body.value!!.isBlank() || imageList.value!!.isEmpty()
 }

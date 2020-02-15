@@ -23,7 +23,7 @@ class Converters {
     @TypeConverter
     fun listToString(list: MutableList<String>): String {
         val mapList =
-            list.map { if (URLUtil.isContentUrl(it)) ContentUris.parseId(Uri.parse(it)).toString() else it }
+                list.map { if (URLUtil.isContentUrl(it)) ContentUris.parseId(Uri.parse(it)).toString() else it }
         return Gson().toJson(mapList, pictureListType)
     }
 

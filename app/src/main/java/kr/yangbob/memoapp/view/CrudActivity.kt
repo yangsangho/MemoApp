@@ -8,12 +8,15 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_crud.*
 import kr.yangbob.memoapp.R
+import kr.yangbob.memoapp.checkPermissionAndRun
 import kr.yangbob.memoapp.databinding.ActivityCrudBinding
 import kr.yangbob.memoapp.viewmodel.CrudViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,33 +32,31 @@ class CrudActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding =
-            DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
+                DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
         binding.lifecycleOwner = this
         binding.model = model
 
-        val memoId: Int = intent.getIntExtra("memoId", -1).also {
-            if (it > 0) {
-                // getFromId 해서 얻기
-                // detail 모드
-            } else {
-                // add 모드
-                editTitle.requestFocus()
-            }
+        val memoId: Int = intent.getIntExtra("memoId", -1)
+        if (memoId > 0) {
+            // detail 모드
+            model.getMemo(memoId)
+        } else {
+            // add 모드
+            editTitle.requestFocus()
         }
-        model.getMemo(memoId)
 
         setSupportActionBar(toolbar)
 
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            crudMotionLayout.loadLayoutDescription(R.xml.scene_crud_landscape)
-            imageRecycler.background = resources.getDrawable(R.drawable.border_left, null)
-        } else {
-            imageRecycler.background = resources.getDrawable(R.drawable.border_top, null)
-        }
-
+        val layoutManager = LinearLayoutManager(this,
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) LinearLayoutManager.VERTICAL
+                else LinearLayoutManager.HORIZONTAL, false)
         val imageList = model.getImageList()
-        imageList.observe(this, Observer {
+        val imageAdapter = ImageListAdapter()
 
+        imageRecycler.layoutManager = layoutManager
+        imageRecycler.adapter = imageAdapter
+        imageList.observe(this, Observer {
+            imageAdapter.updateList(it.toList())
         })
     }
 
@@ -67,7 +68,10 @@ class CrudActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_gallery -> {
             val mimeTypes = arrayOf("image/jpeg", "image/png")
-            model.checkPermissionAndRun(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            checkPermissionAndRun(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    R.string.permission_gallery_rationale,
+                    R.string.permission_gallery_denied) {
                 startActivityForResult(Intent().apply {
                     action = Intent.ACTION_PICK
                     type = MediaStore.Images.Media.CONTENT_TYPE
@@ -76,50 +80,56 @@ class CrudActivity : AppCompatActivity() {
             }
             true
         }
-        R.id.action_camera  -> {
-            model.checkPermissionAndRun(
-                    this,
-                    arrayOf(
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.CAMERA
-                           )
-                                       ) {
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { takePictureIntent ->
-                    takePictureIntent.resolveActivity(packageManager)?.let { _ ->
-                        val photoFile: File? = try {
-                            model.createImageFile()
-                        } catch (ex: IOException) {
-                            null
-                        }
-
-                        photoFile?.let {
-                            val uri = FileProvider.getUriForFile(
-                                    this,
-                                    "$packageName.fileprovider",
-                                    it
-                                                                )
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                            startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
-                        }
+        R.id.action_camera -> {
+            checkPermissionAndRun(this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA),
+                    R.string.permission_camera_rationale,
+                    R.string.permission_camera_denied) {
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { intent ->
+                    val photoFile: File? = try {
+                        model.createImageFile()
+                    } catch (ex: IOException) {
+                        null
+                    }
+                    photoFile?.let {
+                        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", it)
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                        startActivityForResult(intent, REQUEST_CODE_CAMERA)
                     }
                 }
             }
             true
         }
-        R.id.action_url     -> {
+        R.id.action_url -> {
             true
         }
-        R.id.action_save    -> {
+        R.id.action_save -> {
+            var isNotSave = true
+            if(model.hasChange()) {
+                isNotSave = false
+                model.save()
+            }
+
+            if(model.isAddMode()){
+                if(isNotSave) Toast.makeText(this, R.string.crud_dont_save_msg, Toast.LENGTH_LONG).show()
+                finish()
+            } else {
+                model.toggleMenu()
+                invalidateOptionsMenu()
+                editTitle.clearFocus()
+                editBody.clearFocus()
+                // image list 삭제 버튼 없애기 추가 필요
+            }
+
             true
         }
-        R.id.action_edit    -> {
+        R.id.action_edit -> {
             true
         }
-        R.id.action_delete  -> {
+        R.id.action_delete -> {
             true
         }
-        else                -> super.onOptionsItemSelected(item)
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -128,14 +138,23 @@ class CrudActivity : AppCompatActivity() {
             when (requestCode) {
                 REQUEST_CODE_GALLERY -> {
                     data?.data?.let { uri ->
-//                        val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentUris.parseId(uri))
-                        model.addPicture("$uri")
+                        // val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentUris.parseId(uri))
+                        model.addPicture(uri)
                     }
                 }
-                REQUEST_CODE_CAMERA  -> {
+                REQUEST_CODE_CAMERA -> {
 
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        if (model.hasChange()) createChkDialog()
+        else super.onBackPressed()
+    }
+
+    private fun createChkDialog() {
+        // 저장, 저장 안함, 취소 dialog
     }
 }

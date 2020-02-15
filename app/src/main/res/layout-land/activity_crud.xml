@@ -14,7 +14,7 @@
         android:id="@+id/crudMotionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/scene_crud"
+        app:layoutDescription="@xml/scene_crud_landscape"
         tools:context=".view.CrudActivity"
         tools:showPaths="true">
 
@@ -64,7 +64,7 @@
             android:id="@+id/imageRecycler"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@drawable/border_top"
+            android:background="@drawable/border_left"
             android:nestedScrollingEnabled="true" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

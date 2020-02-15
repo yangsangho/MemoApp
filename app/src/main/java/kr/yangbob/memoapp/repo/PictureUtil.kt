@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,12 +20,12 @@ class PictureUtil(context: Context) {
     fun createImageFile(): File {
         // Create an image file name
         val timeStamp: String =
-            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(Date())
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(Date())
         return File.createTempFile(
                 "IMG_${timeStamp}_", /* prefix */
                 ".jpg", /* suffix */
                 storageDir /* directory */
-                                  ).apply {
+        ).apply {
             currentPhotoPath = absolutePath
         }
     }
@@ -40,8 +39,7 @@ class PictureUtil(context: Context) {
             }
         }
         val uri: Uri =
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
-        Log.i("TTTTTTTTTTTTTTTTTTTT", "insert(): uri = $uri")
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
         contentResolver.openFileDescriptor(uri, "w", null)?.use { pfd ->
             FileOutputStream(pfd.fileDescriptor).use { fileOutput ->
                 BufferedOutputStream(fileOutput).use { bufferedOutput ->

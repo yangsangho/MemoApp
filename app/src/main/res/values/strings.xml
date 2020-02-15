@@ -14,4 +14,11 @@
     <string name="menu_url_title">URL</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
+    <string name="permission_gallery_rationale">You need permission to select and attach images of the instrument.</string>
+    <string name="permission_gallery_denied">Permission denied, image cannot be selected for attachment.</string>
+    <string name="permission_camera_rationale">You need permission to attach images using the camera.</string>
+    <string name="permission_camera_denied">Permission denied, images cannot be attached using the camera.</string>
+    <string name="crud_title_hint">Title</string>
+    <string name="crud_text_hint">Text</string>
+    <string name="crud_dont_save_msg">As you did not have any input, did not save the memo</string>
 </resources>

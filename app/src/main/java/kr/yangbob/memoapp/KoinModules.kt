@@ -19,7 +19,7 @@ val dbModule = module {
         Room.databaseBuilder(
                 androidContext(),
                 MemoDatabase::class.java, "MemoDB"
-                            ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration().build()
     }
 }
 val testDbModule = module {
@@ -27,6 +27,6 @@ val testDbModule = module {
         Room.inMemoryDatabaseBuilder(
                 androidContext(),
                 MemoDatabase::class.java
-                                    ).build()
+        ).build()
     }
 }

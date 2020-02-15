@@ -1,22 +1,33 @@
 package kr.yangbob.memoapp.view
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import kr.yangbob.memoapp.R
+import kr.yangbob.memoapp.databinding.ListItemImageBinding
 
-class ImageListAdapter(private var imageList: List<String>) : RecyclerView.Adapter<ImageViewHolder>() {
+class ImageListAdapter : RecyclerView.Adapter<ImageViewHolder>() {
+    private var imageList: List<String> = listOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val binding = DataBindingUtil.inflate<ListItemImageBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.list_item_image,
+                parent,
+                false
+        )
+        return ImageViewHolder(binding)
     }
 
     override fun getItemCount(): Int = imageList.size
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        holder.onBind(imageList[position])
     }
 
-    fun updateList(newImageList: List<String>){
+    fun updateList(newImageList: List<String>) {
         val diffCallback = ImageListDiffCallback(imageList, newImageList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
@@ -25,22 +36,25 @@ class ImageListAdapter(private var imageList: List<String>) : RecyclerView.Adapt
     }
 }
 
-class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
+class ImageViewHolder(private val binding: ListItemImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+    fun onBind(uri: String) {
+        binding.uri = uri
+    }
 }
 
 class ImageListDiffCallback(
         private val oldImageList: List<String>,
         private val newImageList: List<String>
-                           ) : DiffUtil.Callback() {
+) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldImageList.size
     override fun getNewListSize(): Int = newImageList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        oldImageList[oldItemPosition] == newImageList[newItemPosition]
+            oldImageList[oldItemPosition] == newImageList[newItemPosition]
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        oldImageList[oldItemPosition] == newImageList[newItemPosition]
+            oldImageList[oldItemPosition] == newImageList[newItemPosition]
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         // Implement method if you're going to use ItemAnimator
