@@ -52,6 +52,7 @@ class CrudActivity : AppCompatActivity() {
 
         val imageAdapter = ImageListAdapter()
         imageRecycler.adapter = imageAdapter
+        imageRecycler.setHasFixedSize(false)
 
         model.getImageList().observe(this, Observer {
             imageAdapter.updateList(it.toList())
@@ -148,7 +149,7 @@ class CrudActivity : AppCompatActivity() {
                     }
                 }
                 REQUEST_CODE_CAMERA -> {
-
+                    model.saveCameraImage()
                 }
             }
         }

@@ -1,6 +1,7 @@
 package kr.yangbob.memoapp.viewmodel
 
 import android.net.Uri
+import android.webkit.URLUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,6 +48,11 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
 
     fun addPicture(url: String) {
         imageList.value = imageList.value!! + listOf(url)
+    }
+    fun saveCameraImage(){
+        pictureUtil.saveCameraImage()?.let { uri ->
+            addPicture(uri)
+        }
     }
 
     fun save() {

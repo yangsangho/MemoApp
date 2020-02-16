@@ -30,7 +30,19 @@ class PictureUtil(context: Context) {
         }
     }
 
-    fun insert(file: File) {
+    fun saveCameraImage(): Uri?{
+        var uri: Uri? = null
+        currentPhotoPath?.let {path->
+            File(path).let {file ->
+                uri = insert(file)
+                file.delete()
+            }
+            currentPhotoPath = null
+        }
+        return uri
+    }
+
+    private fun insert(file: File): Uri {
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
@@ -59,5 +71,6 @@ class PictureUtil(context: Context) {
             values.put(MediaStore.Images.Media.IS_PENDING, 0)
             contentResolver.update(uri, values, null, null)
         }
+        return uri
     }
 }

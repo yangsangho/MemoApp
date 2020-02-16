@@ -1,6 +1,8 @@
 package kr.yangbob.memoapp.view
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
@@ -39,6 +41,13 @@ class ImageListAdapter : RecyclerView.Adapter<ImageViewHolder>() {
 class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(uri: String) {
         binding.uri = uri
+        binding.holder = this
+    }
+    fun clickImage(view: View){
+        Log.i("TEST", "Click Image")
+    }
+    fun clickDelete(view: View){
+        Log.i("TEST", "Click Delete")
     }
 }
 
