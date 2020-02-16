@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -26,6 +27,7 @@ import java.io.IOException
 
 class CrudActivity : AppCompatActivity() {
     private val model: CrudViewModel by viewModel()
+    private var chkDialog: AlertDialog? = null
     private val REQUEST_CODE_GALLERY = 1
     private val REQUEST_CODE_CAMERA = 2
 
@@ -58,6 +60,18 @@ class CrudActivity : AppCompatActivity() {
         imageList.observe(this, Observer {
             imageAdapter.updateList(it.toList())
         })
+
+        // 데이터 변경이 있을 때, 확인 차 띄울 dialog
+        chkDialog = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_dialog_msg)
+                .setPositiveButton(R.string.crud_dialog_positive){ _, _ ->
+                    model.save()
+                    processAfterSave(isNotSave = false)
+                }
+                .setNegativeButton(R.string.crud_dialog_negative){ _, _ ->
+                    processAfterSave(isNotSave = true)
+                }
+                .create()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -105,22 +119,13 @@ class CrudActivity : AppCompatActivity() {
         }
         R.id.action_save -> {
             var isNotSave = true
-            if(model.hasChange()) {
+            if (model.hasChange()) {
                 isNotSave = false
                 model.save()
             }
 
-            if(model.isAddMode()){
-                if(isNotSave) Toast.makeText(this, R.string.crud_dont_save_msg, Toast.LENGTH_LONG).show()
-                finish()
-            } else {
-                model.toggleMenu()
-                invalidateOptionsMenu()
-                editTitle.clearFocus()
-                editBody.clearFocus()
-                // image list 삭제 버튼 없애기 추가 필요
-            }
-
+            if (isNotSave) Toast.makeText(this, R.string.crud_dont_save_msg, Toast.LENGTH_LONG).show()
+            processAfterSave(isNotSave)
             true
         }
         R.id.action_edit -> {
@@ -150,11 +155,22 @@ class CrudActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (model.hasChange()) createChkDialog()
+        if (model.hasChange()) chkDialog?.show()
         else super.onBackPressed()
     }
 
-    private fun createChkDialog() {
-        // 저장, 저장 안함, 취소 dialog
+    private fun processAfterSave(isNotSave: Boolean){
+        if (model.isAddMode()) {
+            finish()
+        } else {
+            if (isNotSave){
+                // 원래 데이터로 변경하기
+            }
+            model.toggleMode()
+            invalidateOptionsMenu()
+            editTitle.clearFocus()
+            editBody.clearFocus()
+            // image list 삭제 버튼 없애기 추가 필요
+        }
     }
 }

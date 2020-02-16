@@ -21,4 +21,7 @@
     <string name="crud_text_hint">본문</string>
     <string name="crud_title_hint">제목</string>
     <string name="crud_dont_save_msg">입력한 내용이 없어 메모를 저장하지 않았습니다.</string>
+    <string name="crud_dialog_msg">변경사항을 저장할까요?</string>
+    <string name="crud_dialog_positive">저장</string>
+    <string name="crud_dialog_negative">저장 안 함</string>
 </resources>

@@ -56,9 +56,14 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
         memoRepo.insertMemo(memo)
     }
 
-    fun toggleMenu() {
-        curMenuId = if (curMenuId == R.menu.menu_detail) R.menu.menu_add_and_edit
-        else R.menu.menu_detail
+    fun toggleMode() {
+        if (curMode == Mode.Detail){
+            curMenuId =  R.menu.menu_add_and_edit
+            curMode = Mode.Edit
+        } else {
+            curMenuId = R.menu.menu_detail
+            curMode = Mode.Detail
+        }
     }
 
     fun isAddMode(): Boolean = curMode == Mode.Add
@@ -69,5 +74,5 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
         !memo.checkEqual(title.value!!, body.value!!, imageList.value!!)
     }
 
-    private fun chkNullInputData(): Boolean = title.value!!.isBlank() || body.value!!.isBlank() || imageList.value!!.isEmpty()
+    private fun chkNullInputData(): Boolean = title.value!!.isBlank() && body.value!!.isBlank() && imageList.value!!.isEmpty()
 }

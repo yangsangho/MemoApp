@@ -21,4 +21,7 @@
     <string name="crud_title_hint">Title</string>
     <string name="crud_text_hint">Text</string>
     <string name="crud_dont_save_msg">As you did not have any input, did not save the memo</string>
+    <string name="crud_dialog_msg">Save your changes or discard them?</string>
+    <string name="crud_dialog_positive">Save</string>
+    <string name="crud_dialog_negative">Discard</string>
 </resources>
