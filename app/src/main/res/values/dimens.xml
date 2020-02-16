@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="app_bar_height">350dp</dimen>
+    <dimen name="app_bar_height">300dp</dimen>
     <dimen name="app_bar_title_size">35sp</dimen>
     <dimen name="emphasis_text_size">18sp</dimen>
     <dimen name="app_bar_title_normal_size">20sp</dimen>
