@@ -24,4 +24,6 @@
     <string name="crud_dialog_msg">변경사항을 저장할까요?</string>
     <string name="crud_dialog_positive">저장</string>
     <string name="crud_dialog_negative">저장 안 함</string>
+    <string name="main_no_title">본문 없음</string>
+    <string name="main_no_text">제목 없음</string>
 </resources>

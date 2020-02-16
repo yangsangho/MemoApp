@@ -16,3 +16,5 @@ fun Memo.isNull(): Boolean = title.isBlank() || text.isBlank() || images.isEmpty
 
 fun Memo.checkEqual(chkTitle: String, chkText: String, chkPictures: List<String>): Boolean =
         (title == chkTitle) && (text == chkText) && (images == chkPictures)
+fun Memo.checkEqual(other: Memo): Boolean =
+        (title == other.title) && (text == other.text) && (images == other.images)

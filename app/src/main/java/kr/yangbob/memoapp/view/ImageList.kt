@@ -28,16 +28,15 @@ class ImageListAdapter : RecyclerView.Adapter<ImageViewHolder>() {
     }
 
     fun updateList(newImageList: List<String>) {
-        val diffCallback = ImageListDiffCallback(imageList, newImageList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
+        val diffResult = ImageListDiffCallback(imageList, newImageList).let {
+            DiffUtil.calculateDiff(it)
+        }
         imageList = newImageList
         diffResult.dispatchUpdatesTo(this)
     }
 }
 
-class ImageViewHolder(private val binding: ListItemImageBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(uri: String) {
         binding.uri = uri
     }

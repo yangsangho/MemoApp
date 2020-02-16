@@ -24,4 +24,6 @@
     <string name="crud_dialog_msg">Save your changes or discard them?</string>
     <string name="crud_dialog_positive">Save</string>
     <string name="crud_dialog_negative">Discard</string>
+    <string name="main_no_title">No Title</string>
+    <string name="main_no_text">No Text</string>
 </resources>

@@ -1,9 +1,13 @@
 package kr.yangbob.memoapp.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
 interface MemoDao {
+    @Query("SELECT * FROM Memo")
+    fun getAllLD(): LiveData<List<Memo>>
+
     @Query("SELECT * FROM Memo")
     suspend fun getAll(): List<Memo>
 

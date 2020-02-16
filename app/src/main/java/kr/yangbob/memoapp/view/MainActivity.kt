@@ -4,34 +4,57 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.yangbob.memoapp.R
+import kr.yangbob.memoapp.databinding.ActivityMainBinding
+import kr.yangbob.memoapp.viewmodel.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
+    private val model: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
+        binding.cntNotes = 0
+
         setSupportActionBar(toolbar)
 
+        val spanCount: Int
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            noteRecycler.layoutManager =
-                    StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+            spanCount = 3
         } else {
+            spanCount = 2
             setScrollEvent()
-            noteRecycler.layoutManager =
-                    StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
-        noteRecycler.adapter = NoteListAdapter(listOf())
+        val memoAdapter = MemoListAdapter()
+
+        memoRecycler.layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+        memoRecycler.adapter = memoAdapter
 
         addBtn.setOnClickListener {
             startActivity(Intent(this, CrudActivity::class.java))
         }
+
+        model.getMemoList().observe(this, Observer {
+            memoAdapter.updateList(it)
+            binding.cntNotes = it.size
+            if(noItemMsgLayout.visibility == View.GONE && it.isEmpty()){
+                noItemMsgLayout.visibility = View.VISIBLE
+            } else if(noItemMsgLayout.visibility != View.GONE && it.isNotEmpty() ){
+                noItemMsgLayout.visibility = View.GONE
+            }
+        })
     }
 
     private fun setScrollEvent() {

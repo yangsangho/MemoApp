@@ -42,6 +42,7 @@ class CrudActivity : AppCompatActivity() {
         if (memoId > 0) {
             // detail 모드
             model.getMemo(memoId)
+            model.toggleMode()
         } else {
             // add 모드
             editTitle.requestFocus()
@@ -60,6 +61,10 @@ class CrudActivity : AppCompatActivity() {
         imageList.observe(this, Observer {
             imageAdapter.updateList(it.toList())
         })
+
+        writeLayoutLinear.setOnClickListener {
+            editBody.requestFocus()
+        }
 
         // 데이터 변경이 있을 때, 확인 차 띄울 dialog
         chkDialog = AlertDialog.Builder(this)
