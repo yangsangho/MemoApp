@@ -50,15 +50,10 @@ class CrudActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val layoutManager = LinearLayoutManager(this,
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) LinearLayoutManager.VERTICAL
-                else LinearLayoutManager.HORIZONTAL, false)
-        val imageList = model.getImageList()
         val imageAdapter = ImageListAdapter()
-
-        imageRecycler.layoutManager = layoutManager
         imageRecycler.adapter = imageAdapter
-        imageList.observe(this, Observer {
+
+        model.getImageList().observe(this, Observer {
             imageAdapter.updateList(it.toList())
         })
 

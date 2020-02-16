@@ -65,7 +65,9 @@
             android:id="@+id/imageRecycler"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@drawable/border_left" />
+            android:background="@drawable/border_left"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

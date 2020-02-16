@@ -1,23 +1,16 @@
 package kr.yangbob.memoapp.view
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Point
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.ActivityMainBinding
 import kr.yangbob.memoapp.viewmodel.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
     private val model: MainViewModel by viewModel()
@@ -30,16 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val spanCount: Int
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 3
-        } else {
-            spanCount = 2
-//            setScrollEvent()
-        }
         val memoAdapter = MemoListAdapter()
-
-        memoRecycler.layoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
         memoRecycler.adapter = memoAdapter
 
         addBtn.setOnClickListener {
