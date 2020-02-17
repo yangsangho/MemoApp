@@ -2,12 +2,15 @@ package kr.yangbob.memoapp.view
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.webkit.URLUtil
 import android.widget.EditText
 import android.widget.Toast
@@ -17,6 +20,7 @@ import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_crud.*
+import kr.yangbob.memoapp.Mode
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.checkPermissionAndRun
 import kr.yangbob.memoapp.databinding.ActivityCrudBinding
@@ -27,11 +31,12 @@ import java.io.IOException
 
 
 class CrudActivity : AppCompatActivity() {
+    private val requestCodeGallery = 1
+    private val requestCodeCamera = 2
     private val model: CrudViewModel by viewModel()
     private lateinit var dialogForBackBtn: AlertDialog
     private lateinit var dialogForInputUrl: AlertDialog
-    private val REQUEST_CODE_GALLERY = 1
-    private val REQUEST_CODE_CAMERA = 2
+    private lateinit var imm: InputMethodManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +46,15 @@ class CrudActivity : AppCompatActivity() {
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
         if (memoId > 0) {
+            toolbar.setTitle(R.string.crud_appbar_title_detail)
             model.getMemo(memoId)
-            model.toggleMode()
         } else {
+            toolbar.setTitle(R.string.crud_appbar_title_add)
             editTitle.requestFocus()
         }
 
         setSupportActionBar(toolbar)
+
 
         val imageAdapter = ImageListAdapter()
         imageRecycler.adapter = imageAdapter
@@ -57,14 +64,22 @@ class CrudActivity : AppCompatActivity() {
             imageAdapter.updateList(it.toList())
         })
 
+
         writeLayoutLinear.setOnClickListener {
             editBody.requestFocus()
         }
+        val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus && model.isDetailMode()) changeModeTo(Mode.Edit, v)
+        }
+        editTitle.onFocusChangeListener = focusChangeListener
+        editBody.onFocusChangeListener = focusChangeListener
 
+        // lateinit variable init
+        imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         dialogForBackBtn = AlertDialog.Builder(this)
                 .setMessage(R.string.crud_chk_dialog_msg)
                 .setPositiveButton(R.string.crud_chk_dialog_positive) { _, _ ->
-                    model.save()
+                    model.saveData()
                     processAfterSave(isNotSave = false)
                 }
                 .setNegativeButton(R.string.crud_chk_dialog_negative) { _, _ ->
@@ -112,7 +127,7 @@ class CrudActivity : AppCompatActivity() {
                     action = Intent.ACTION_PICK
                     type = MediaStore.Images.Media.CONTENT_TYPE
                     putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-                }, REQUEST_CODE_GALLERY)
+                }, requestCodeGallery)
             }
             true
         }
@@ -130,7 +145,7 @@ class CrudActivity : AppCompatActivity() {
                     photoFile?.let {
                         val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", it)
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-                        startActivityForResult(intent, REQUEST_CODE_CAMERA)
+                        startActivityForResult(intent, requestCodeCamera)
                     }
                 }
             }
@@ -144,17 +159,19 @@ class CrudActivity : AppCompatActivity() {
             var isNotSave = true
             if (model.hasChange()) {
                 isNotSave = false
-                model.save()
+                model.saveData()
             }
-
-            if (isNotSave) Toast.makeText(this, R.string.crud_dont_save_msg, Toast.LENGTH_LONG).show()
+            if (isNotSave && model.isAddMode()) Toast.makeText(this, R.string.crud_dont_save_msg, Toast.LENGTH_LONG).show()
             processAfterSave(isNotSave)
             true
         }
         R.id.action_edit -> {
+            changeModeTo(Mode.Edit)
             true
         }
         R.id.action_delete -> {
+            model.deleteMemo()
+            finish()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -164,13 +181,12 @@ class CrudActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                REQUEST_CODE_GALLERY -> {
+                requestCodeGallery -> {
                     data?.data?.let { uri ->
-                        // val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentUris.parseId(uri))
                         model.addPicture(uri)
                     }
                 }
-                REQUEST_CODE_CAMERA -> {
+                requestCodeCamera -> {
                     model.saveCameraImage()
                 }
             }
@@ -179,25 +195,42 @@ class CrudActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (model.hasChange()) dialogForBackBtn.show()
-        else super.onBackPressed()
+        else {
+            if (model.isEditMode()) changeModeTo(Mode.Detail)
+            else super.onBackPressed()
+        }
     }
 
     private fun processAfterSave(isNotSave: Boolean) {
         if (model.isAddMode()) {
             finish()
         } else {
-            if (isNotSave) {
-                // 원래 데이터로 변경하기
-            }
-            model.toggleMode()
-            invalidateOptionsMenu()
-            editTitle.clearFocus()
-            editBody.clearFocus()
-            // image list 삭제 버튼 없애기 추가 필요
+            if (isNotSave) model.resetData()
+            changeModeTo(Mode.Detail)
+            imm.hideSoftInputFromWindow(editTitle.windowToken, 0)
         }
     }
 
-    fun removePicture(uri: String){
+    // image list 삭제버튼 toggle 기능 추가 필요
+    private fun changeModeTo(mode: Mode, focusView: View? = null) {
+        if (mode == Mode.Add) throw IllegalArgumentException()
+        model.changeMode(mode)
+        if (mode == Mode.Detail) {
+            toolbar.setTitle(R.string.crud_appbar_title_detail)
+            editTitle.clearFocus()
+            editBody.clearFocus()
+        } else {
+            toolbar.setTitle(R.string.crud_appbar_title_edit)
+            val editText: EditText = if (focusView == null) editTitle
+            else focusView as EditText
+
+            editText.requestFocus()
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        }
+        invalidateOptionsMenu()
+    }
+
+    fun removePicture(uri: String) {
         model.removePicture(uri)
     }
 }

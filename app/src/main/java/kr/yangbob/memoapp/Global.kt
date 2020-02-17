@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import com.tedpark.tedpermission.rx2.TedRx2Permission
 
+enum class Mode {
+    Add, Detail, Edit
+}
+
 @SuppressLint("CheckResult")
 fun checkPermissionAndRun(
         activity: Activity,

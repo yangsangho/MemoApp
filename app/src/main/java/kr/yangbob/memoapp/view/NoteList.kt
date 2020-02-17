@@ -1,5 +1,6 @@
 package kr.yangbob.memoapp.view
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.yangbob.memoapp.R
-import kr.yangbob.memoapp.databinding.ListItemNoteBinding
+import kr.yangbob.memoapp.databinding.ListItemMemoBinding
 import kr.yangbob.memoapp.db.Memo
 import kr.yangbob.memoapp.db.checkEqual
 
@@ -15,7 +16,7 @@ class MemoListAdapter() : RecyclerView.Adapter<MemoViewHolder>() {
     private var memoList: List<Memo> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
-        val binding = DataBindingUtil.inflate<ListItemNoteBinding>(LayoutInflater.from(parent.context), R.layout.list_item_note, parent, false)
+        val binding = DataBindingUtil.inflate<ListItemMemoBinding>(LayoutInflater.from(parent.context), R.layout.list_item_memo, parent, false)
         return MemoViewHolder(binding)
     }
 
@@ -34,9 +35,20 @@ class MemoListAdapter() : RecyclerView.Adapter<MemoViewHolder>() {
     }
 }
 
-class MemoViewHolder(private val binding: ListItemNoteBinding) : RecyclerView.ViewHolder(binding.root) {
+class MemoViewHolder(private val binding: ListItemMemoBinding) : RecyclerView.ViewHolder(binding.root) {
+    private val context = binding.root.context
+    private lateinit var memo: Memo
+
     fun bind(memo: Memo) {
         binding.memo = memo
+        binding.holder = this
+        this.memo = memo
+    }
+
+    fun clickMemo(view: View){
+        context.startActivity(Intent(context, CrudActivity::class.java).apply {
+            putExtra("memoId", memo.id)
+        })
     }
 }
 

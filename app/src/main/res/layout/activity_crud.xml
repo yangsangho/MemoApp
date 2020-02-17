@@ -64,7 +64,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/imageRecycler"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/list_item_image_size"
+            android:layout_height="@dimen/image_list_size"
             android:background="@drawable/border_top"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

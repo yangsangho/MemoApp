@@ -32,4 +32,7 @@
     <string name="crud_url_dialog_deny_http_msg">Network security policy limits access to \'http://\'.\\nPlease use \'https://\'.</string>
     <string name="crud_url_dialog_invalid">Invalid URL. Please check and try again.</string>
     <string name="no_photo_msg">No photos found.</string>
+    <string name="crud_appbar_title_edit">Edit Memo</string>
+    <string name="crud_appbar_title_detail">Detail Memo</string>
+    <string name="crud_appbar_title_add">Add Memo</string>
 </resources>
