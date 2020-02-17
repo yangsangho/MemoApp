@@ -3,18 +3,19 @@ package kr.yangbob.memoapp.view
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.webkit.URLUtil
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_crud.*
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.checkPermissionAndRun
@@ -27,24 +28,22 @@ import java.io.IOException
 
 class CrudActivity : AppCompatActivity() {
     private val model: CrudViewModel by viewModel()
-    private var chkDialog: AlertDialog? = null
+    private lateinit var dialogForBackBtn: AlertDialog
+    private lateinit var dialogForInputUrl: AlertDialog
     private val REQUEST_CODE_GALLERY = 1
     private val REQUEST_CODE_CAMERA = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding =
-                DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
+        val binding = DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
         binding.lifecycleOwner = this
         binding.model = model
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
         if (memoId > 0) {
-            // detail 모드
             model.getMemo(memoId)
             model.toggleMode()
         } else {
-            // add 모드
             editTitle.requestFocus()
         }
 
@@ -62,16 +61,38 @@ class CrudActivity : AppCompatActivity() {
             editBody.requestFocus()
         }
 
-        // 데이터 변경이 있을 때, 확인 차 띄울 dialog
-        chkDialog = AlertDialog.Builder(this)
-                .setMessage(R.string.crud_dialog_msg)
-                .setPositiveButton(R.string.crud_dialog_positive){ _, _ ->
+        dialogForBackBtn = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_chk_dialog_msg)
+                .setPositiveButton(R.string.crud_chk_dialog_positive) { _, _ ->
                     model.save()
                     processAfterSave(isNotSave = false)
                 }
-                .setNegativeButton(R.string.crud_dialog_negative){ _, _ ->
+                .setNegativeButton(R.string.crud_chk_dialog_negative) { _, _ ->
                     processAfterSave(isNotSave = true)
                 }
+                .create()
+
+
+        val inputUrlLayout = layoutInflater.inflate(R.layout.dialog_input_url, null)
+        val inputUrl = inputUrlLayout.findViewById<EditText>(R.id.inputUrl)
+        dialogForInputUrl = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_url_dialog_msg)
+                .setView(inputUrlLayout)
+                .setPositiveButton(R.string.crud_url_dialog_positive) { _, _ ->
+                    val url = inputUrl.text.toString()
+                    inputUrl.setText("")
+
+                    if (URLUtil.isHttpsUrl(url)) {
+                        model.addPicture(url)
+                    } else if (URLUtil.isHttpUrl(url)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                            Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
+                        else model.addPicture(url)
+                    } else {
+                        Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
+                    }
+                }
+                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }
                 .create()
     }
 
@@ -116,6 +137,7 @@ class CrudActivity : AppCompatActivity() {
             true
         }
         R.id.action_url -> {
+            dialogForInputUrl.show()
             true
         }
         R.id.action_save -> {
@@ -156,15 +178,15 @@ class CrudActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (model.hasChange()) chkDialog?.show()
+        if (model.hasChange()) dialogForBackBtn.show()
         else super.onBackPressed()
     }
 
-    private fun processAfterSave(isNotSave: Boolean){
+    private fun processAfterSave(isNotSave: Boolean) {
         if (model.isAddMode()) {
             finish()
         } else {
-            if (isNotSave){
+            if (isNotSave) {
                 // 원래 데이터로 변경하기
             }
             model.toggleMode()
@@ -173,5 +195,9 @@ class CrudActivity : AppCompatActivity() {
             editBody.clearFocus()
             // image list 삭제 버튼 없애기 추가 필요
         }
+    }
+
+    fun removePicture(uri: String){
+        model.removePicture(uri)
     }
 }

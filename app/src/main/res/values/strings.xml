@@ -21,9 +21,15 @@
     <string name="crud_title_hint">Title</string>
     <string name="crud_text_hint">Text</string>
     <string name="crud_dont_save_msg">As you did not have any input, did not save the memo</string>
-    <string name="crud_dialog_msg">Save your changes or discard them?</string>
-    <string name="crud_dialog_positive">Save</string>
-    <string name="crud_dialog_negative">Discard</string>
+    <string name="crud_chk_dialog_msg">Save your changes or discard them?</string>
+    <string name="crud_chk_dialog_positive">Save</string>
+    <string name="crud_chk_dialog_negative">Discard</string>
     <string name="main_no_title">No Title</string>
     <string name="main_no_text">No Text</string>
+    <string name="crud_url_dialog_msg">Please enter the URL of the image to attach.</string>
+    <string name="crud_url_dialog_positive">Attachment</string>
+    <string name="crud_url_dialog_negative">Cancel</string>
+    <string name="crud_url_dialog_deny_http_msg">Network security policy limits access to \'http://\'.\\nPlease use \'https://\'.</string>
+    <string name="crud_url_dialog_invalid">Invalid URL. Please check and try again.</string>
+    <string name="no_photo_msg">No photos found.</string>
 </resources>
