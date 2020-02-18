@@ -4,7 +4,9 @@
     <dimen name="app_bar_title_size">35sp</dimen>
     <dimen name="emphasis_text_size">18sp</dimen>
     <dimen name="app_bar_title_normal_size">20sp</dimen>
-    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="title_text_size">18sp</dimen>
+    <dimen name="memo_list_title_size">16sp</dimen>
+    <dimen name="memo_list_body_size">12sp</dimen>
     <dimen name="image_list_size">150dp</dimen>
     <dimen name="memo_thumbnail_max_height">200dp</dimen>
 </resources>

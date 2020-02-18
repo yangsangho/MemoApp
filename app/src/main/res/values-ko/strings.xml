@@ -4,8 +4,8 @@
     <string name="main_appbar_title">모든 노트</string>
     <string name="main_no_item_msg1">노트가 없어요</string>
     <string name="main_no_item_msg2">노트를 작성하려면 추가 버튼을 누르세요.</string>
-    <plurals name="main_appbar_notes">
-        <item quantity="other">%d notes</item>
+    <plurals name="main_appbar_cnt_memo">
+        <item quantity="other">노트 %d개</item>
     </plurals>
     <string name="menu_save_title">저장</string>
     <string name="menu_attach_title">첨부</string>
@@ -35,4 +35,7 @@
     <string name="crud_appbar_title_edit">메모 수정</string>
     <string name="crud_appbar_title_detail">상세 메모</string>
     <string name="crud_appbar_title_add">메모 추가</string>
+    <string name="crud_delete_dialog_msg">메모를 삭제할까요?</string>
+    <string name="crud_delete_dialog_negative">취소</string>
+    <string name="crud_delete_dialog_positive">삭제</string>
 </resources>

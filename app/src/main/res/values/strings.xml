@@ -3,7 +3,7 @@
     <string name="main_appbar_title">All notes</string>
     <string name="main_no_item_msg1">No notes</string>
     <string name="main_no_item_msg2">Tap the Add button to create a note.</string>
-    <plurals name="main_appbar_notes">
+    <plurals name="main_appbar_cnt_memo">
         <item quantity="one">%d note</item>
         <item quantity="other">%d notes</item>
     </plurals>
@@ -35,4 +35,7 @@
     <string name="crud_appbar_title_edit">Edit Memo</string>
     <string name="crud_appbar_title_detail">Detail Memo</string>
     <string name="crud_appbar_title_add">Add Memo</string>
+    <string name="crud_delete_dialog_positive">Delete</string>
+    <string name="crud_delete_dialog_negative">Cancel</string>
+    <string name="crud_delete_dialog_msg">Do you want to delete the Memo?</string>
 </resources>

@@ -29,13 +29,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 
-
 class CrudActivity : AppCompatActivity() {
     private val requestCodeGallery = 1
     private val requestCodeCamera = 2
     private val model: CrudViewModel by viewModel()
+    private lateinit var imageListAdapter: ImageListAdapter
     private lateinit var dialogForBackBtn: AlertDialog
     private lateinit var dialogForInputUrl: AlertDialog
+    private lateinit var dialogForDelete: AlertDialog
     private lateinit var imm: InputMethodManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +46,11 @@ class CrudActivity : AppCompatActivity() {
         binding.model = model
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
+        imageListAdapter = ImageListAdapter()
         if (memoId > 0) {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             model.getMemo(memoId)
+            imageListAdapter.setCanDelete(false)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_add)
             editTitle.requestFocus()
@@ -55,15 +58,10 @@ class CrudActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-
-        val imageAdapter = ImageListAdapter()
-        imageRecycler.adapter = imageAdapter
-        imageRecycler.setHasFixedSize(false)
-
+        imageRecycler.adapter = imageListAdapter
         model.getImageList().observe(this, Observer {
-            imageAdapter.updateList(it.toList())
+            imageListAdapter.updateList(it.toList())
         })
-
 
         writeLayoutLinear.setOnClickListener {
             editBody.requestFocus()
@@ -74,7 +72,6 @@ class CrudActivity : AppCompatActivity() {
         editTitle.onFocusChangeListener = focusChangeListener
         editBody.onFocusChangeListener = focusChangeListener
 
-        // lateinit variable init
         imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         dialogForBackBtn = AlertDialog.Builder(this)
                 .setMessage(R.string.crud_chk_dialog_msg)
@@ -107,8 +104,15 @@ class CrudActivity : AppCompatActivity() {
                         Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
                     }
                 }
-                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }
-                .create()
+                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }.create()
+
+        dialogForDelete = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_delete_dialog_msg)
+                .setPositiveButton(R.string.crud_delete_dialog_positive) { _, _ ->
+                    model.deleteMemo()
+                    finish()
+                }
+                .setNegativeButton(R.string.crud_delete_dialog_negative) { _, _ -> }.create()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -170,8 +174,7 @@ class CrudActivity : AppCompatActivity() {
             true
         }
         R.id.action_delete -> {
-            model.deleteMemo()
-            finish()
+            dialogForDelete.show()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -211,7 +214,6 @@ class CrudActivity : AppCompatActivity() {
         }
     }
 
-    // image list 삭제버튼 toggle 기능 추가 필요
     private fun changeModeTo(mode: Mode, focusView: View? = null) {
         if (mode == Mode.Add) throw IllegalArgumentException()
         model.changeMode(mode)
@@ -219,6 +221,7 @@ class CrudActivity : AppCompatActivity() {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             editTitle.clearFocus()
             editBody.clearFocus()
+            imageListAdapter.setCanDelete(false)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_edit)
             val editText: EditText = if (focusView == null) editTitle
@@ -226,6 +229,7 @@ class CrudActivity : AppCompatActivity() {
 
             editText.requestFocus()
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            imageListAdapter.setCanDelete(true)
         }
         invalidateOptionsMenu()
     }
