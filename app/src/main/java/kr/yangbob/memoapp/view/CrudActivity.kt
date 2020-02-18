@@ -46,7 +46,7 @@ class CrudActivity : AppCompatActivity() {
         binding.model = model
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
-        imageListAdapter = ImageListAdapter(model.canDelete)
+        imageListAdapter = ImageListAdapter(model.getCanDelete())
         if (memoId > 0) {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             model.getMemo(memoId)

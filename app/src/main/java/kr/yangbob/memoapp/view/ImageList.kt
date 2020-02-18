@@ -74,7 +74,7 @@ class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.
     }
 
     fun clickDelete(view: View) {
-        (view.context as CrudActivity).removePicture(uri)
+        (view.context as CrudActivity).removePicture(adapterPosition)
     }
 
     fun markAttach() {
