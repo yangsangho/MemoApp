@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="model"
             type="kr.yangbob.memoapp.viewmodel.CrudViewModel" />
@@ -55,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@android:color/transparent"
-                    android:hint="@string/crud_text_hint"
+                    android:hint="@string/crud_body_hint"
                     android:inputType="textMultiLine"
                     android:text="@={model.body}" />
             </LinearLayout>
@@ -69,6 +71,16 @@
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/writeLayout" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/crud_no_image_msg"
+            android:visibility="@{model.isNoItem ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/writeLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

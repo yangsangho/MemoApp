@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.BigImageActivity"></activity>
         <activity android:name=".view.CrudActivity" />
         <activity
             android:name=".view.MainActivity"
@@ -38,4 +39,5 @@
                 android:resource="@xml/provider" />
         </provider>
     </application>
+
 </manifest>

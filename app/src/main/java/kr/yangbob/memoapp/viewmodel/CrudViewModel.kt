@@ -18,12 +18,14 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     private var curMode = Mode.Add
     private var curMenuId = R.menu.menu_add_and_edit
     private lateinit var memo: Memo
-    private val _canDelete = MutableLiveData<Boolean>()
+    private val canDelete = MutableLiveData<Boolean>()
     private val imageList = MutableLiveData<MutableList<String>>(mutableListOf())
+    private val _isNoItem = MutableLiveData<Boolean>()
+    val isNoItem: LiveData<Boolean> = _isNoItem
     val title = MutableLiveData<String>()
     val body = MutableLiveData<String>()
-    val canDelete: LiveData<Boolean> = _canDelete
 
+    fun getCanDelete(): LiveData<Boolean> = canDelete
     fun getMemo(memoId: Int) {
         if (isInit) return
         isInit = true
@@ -31,12 +33,13 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
         if (memoId > 0) {
             curMode = Mode.Detail
             curMenuId = R.menu.menu_detail
-            _canDelete.value = false
+            canDelete.value = false
             memo = memoRepo.getMemoFromId(memoId)!!
             resetData()
         } else {
             memo = Memo()
-            _canDelete.value = true
+            canDelete.value = true
+            _isNoItem.value = true
             title.value = ""
             body.value = ""
         }
@@ -44,14 +47,15 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
 
     fun resetData() {
         title.value = memo.title
-        body.value = memo.text
+        body.value = memo.body
         imageList.value?.clear()
+        _isNoItem.value = memo.images.isEmpty()
         imageList.addAll(memo.images)
     }
 
     fun saveData() {
         memo.title = title.value!!
-        memo.text = body.value!!
+        memo.body = body.value!!
         memo.images = imageList.value!!.toList()
         memoRepo.insertMemo(memo)
     }
@@ -76,11 +80,11 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     fun changeMode(mode: Mode) = if (mode == Mode.Detail) {
         curMode = Mode.Detail
         curMenuId = R.menu.menu_detail
-        _canDelete.value = false
+        canDelete.value = false
     } else {
         curMode = Mode.Edit
         curMenuId = R.menu.menu_add_and_edit
-        _canDelete.value = true
+        canDelete.value = true
     }
 
     fun isAddMode(): Boolean = curMode == Mode.Add
@@ -95,6 +99,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     private fun chkNullInputData(): Boolean = title.value!!.isBlank() && body.value!!.isBlank() && imageList.value!!.isEmpty()
 
     private fun MutableLiveData<MutableList<String>>.add(item: String) {
+        if(_isNoItem.value!!) _isNoItem.value = false
         this.value?.add(item)
         this.value = this.value
     }
@@ -106,11 +111,17 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
 
     private fun MutableLiveData<MutableList<String>>.remove(item: String) {
         this.value?.remove(item)
+        if(this.value!!.isEmpty()){
+            _isNoItem.value = true
+        }
         this.value = this.value
     }
 
     private fun MutableLiveData<MutableList<String>>.remove(idx: Int) {
         this.value?.removeAt(idx)
+        if(this.value!!.isEmpty()){
+            _isNoItem.value = true
+        }
         this.value = this.value
     }
 }

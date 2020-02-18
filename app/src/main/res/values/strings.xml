@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">MemoApp</string>
     <string name="main_appbar_title">All notes</string>
-    <string name="main_no_item_msg1">No notes</string>
-    <string name="main_no_item_msg2">Tap the Add button to create a note.</string>
+    <string name="crud_no_image_msg">No Attachment</string>
+    <string name="main_no_item_msg1">No memos</string>
+    <string name="main_no_item_msg2">Tap the Add button to create a memo.</string>
     <plurals name="main_appbar_cnt_memo">
-        <item quantity="one">%d note</item>
-        <item quantity="other">%d notes</item>
+        <item quantity="one">%d memo</item>
+        <item quantity="other">%d memos</item>
     </plurals>
     <string name="menu_save_title">Save</string>
     <string name="menu_attach_title">Attach</string>
@@ -19,13 +20,13 @@
     <string name="permission_camera_rationale">You need permission to attach images using the camera.</string>
     <string name="permission_camera_denied">Permission denied, images cannot be attached using the camera.</string>
     <string name="crud_title_hint">Title</string>
-    <string name="crud_text_hint">Text</string>
+    <string name="crud_body_hint">Body</string>
     <string name="crud_dont_save_msg">As you did not have any input, did not save the memo</string>
     <string name="crud_chk_dialog_msg">Save your changes or discard them?</string>
     <string name="crud_chk_dialog_positive">Save</string>
     <string name="crud_chk_dialog_negative">Discard</string>
     <string name="main_no_title">No Title</string>
-    <string name="main_no_text">No Text</string>
+    <string name="main_no_body">No Body</string>
     <string name="crud_url_dialog_msg">Please enter the URL of the image to attach.</string>
     <string name="crud_url_dialog_positive">Attachment</string>
     <string name="crud_url_dialog_negative">Cancel</string>

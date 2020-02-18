@@ -15,15 +15,26 @@ import com.bumptech.glide.request.target.Target
 import kr.yangbob.memoapp.view.CrudActivity
 
 object BindingAdapters {
-    @BindingAdapter("app:setUri")
+    @BindingAdapter("app:setUriBig")
     @JvmStatic
-    fun setUri(view: ImageView, uri: String?) {
-        uri?.let { uri ->
+    fun setUriBig(view: ImageView, uri: String?) {
+        uri?.let {
+            Glide.with(view.context).load(uri)
+                    .error(R.drawable.ic_img_load_error)
+                    .into(view)
+        }
+    }
+
+    @BindingAdapter("app:setUriSmall")
+    @JvmStatic
+    fun setUriSmall(view: ImageView, uri: String?) {
+        uri?.let {
             val crudActivity = view.context as CrudActivity
 
             Glide.with(crudActivity).load(uri)
                     .error(R.drawable.ic_img_load_error)
-                    .placeholder(R.drawable.ic_img_loading)
+//                    .placeholder(R.drawable.ic_img_loading)
+                    .override(200, 200)
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                             Toast.makeText(crudActivity, R.string.no_photo_msg, Toast.LENGTH_LONG).show()
@@ -49,10 +60,10 @@ object BindingAdapters {
         else view.text = title
     }
 
-    @BindingAdapter("app:setText")
+    @BindingAdapter("app:setBody")
     @JvmStatic
-    fun setText(view: TextView, text: String) {
-        if (text.isBlank()) view.setText(R.string.main_no_text)
+    fun setBody(view: TextView, text: String) {
+        if (text.isBlank()) view.setText(R.string.main_no_body)
         else view.text = text
     }
 
@@ -61,11 +72,11 @@ object BindingAdapters {
     fun setThumbnail(view: ImageView, imageList: List<String>) {
         if (imageList.isEmpty()) view.visibility = View.GONE
         else {
-            if(view.visibility == View.GONE) view.visibility = View.VISIBLE
+            if (view.visibility == View.GONE) view.visibility = View.VISIBLE
             Glide.with(view.context).load(imageList.first())
                     .error(R.drawable.ic_img_load_error)
                     .placeholder(R.drawable.ic_img_loading)
-                    .override(200, 200).into(view)
+                    .override(300, 300).into(view)
         }
     }
 }

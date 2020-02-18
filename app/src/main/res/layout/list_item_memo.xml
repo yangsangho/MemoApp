@@ -37,13 +37,13 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/memo_list_title_size"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/memoText"
+                app:layout_constraintBottom_toTopOf="@id/memoBody"
                 app:layout_constraintTop_toTopOf="parent"
                 app:setTitle="@{memo.title}"
                 tools:text="테스트" />
 
             <TextView
-                android:id="@+id/memoText"
+                android:id="@+id/memoBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -52,7 +52,7 @@
                 android:maxLines="4"
                 app:layout_constraintBottom_toTopOf="@id/thumbnail"
                 app:layout_constraintTop_toBottomOf="@id/noteTitle"
-                app:setText="@{memo.text}"
+                app:setBody="@{memo.body}"
                 tools:text="테스트" />
 
             <ImageView
@@ -63,7 +63,7 @@
                 android:adjustViewBounds="true"
                 android:maxHeight="@dimen/memo_thumbnail_max_height"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/memoText"
+                app:layout_constraintTop_toBottomOf="@id/memoBody"
                 app:setThumbnail="@{memo.images}"
                 tools:srcCompat="@drawable/ic_launcher_background" />
         </androidx.constraintlayout.widget.ConstraintLayout>

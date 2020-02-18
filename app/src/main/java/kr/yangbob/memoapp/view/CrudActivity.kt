@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_crud.*
 import kr.yangbob.memoapp.Mode
@@ -32,18 +33,28 @@ import java.io.IOException
 class CrudActivity : AppCompatActivity() {
     private val requestCodeGallery = 1
     private val requestCodeCamera = 2
+    private val requestBigImageActivity = 3
+
     private val model: CrudViewModel by viewModel()
+    lateinit var canDelete: LiveData<Boolean>
+    private lateinit var imageList: LiveData<MutableList<String>>
+
     private lateinit var imageListAdapter: ImageListAdapter
     private lateinit var dialogForBackBtn: AlertDialog
     private lateinit var dialogForInputUrl: AlertDialog
     private lateinit var dialogForDelete: AlertDialog
     private lateinit var imm: InputMethodManager
 
+    private var preventInitScroll = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
         binding.lifecycleOwner = this
         binding.model = model
+
+        canDelete = model.getCanDelete()
+        imageList = model.getImageList()
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
         model.getMemo(memoId)
@@ -57,10 +68,15 @@ class CrudActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        imageListAdapter = ImageListAdapter(model)
+        imageListAdapter = ImageListAdapter(this)
         imageRecycler.adapter = imageListAdapter
-        model.getImageList().observe(this, Observer {
+        imageList.observe(this, Observer {
             imageListAdapter.updateList(it.toList())
+            if(preventInitScroll){
+                if(it.size > 2){
+                    imageRecycler.layoutManager?.scrollToPosition(it.size - 1)
+                }
+            } else preventInitScroll = true
         })
 
         writeLayoutLinear.setOnClickListener {
@@ -158,6 +174,9 @@ class CrudActivity : AppCompatActivity() {
                 requestCodeCamera -> {
                     model.saveCameraImage()
                 }
+                requestBigImageActivity -> {
+                    imageRecycler.layoutManager?.scrollToPosition(data?.getIntExtra("idx", 0) ?: 0)
+                }
             }
         }
     }
@@ -198,13 +217,6 @@ class CrudActivity : AppCompatActivity() {
         invalidateOptionsMenu()
     }
 
-    fun removePicture(uri: String) {
-        model.removePicture(uri)
-    }
-
-    fun removePicture(idx: Int) {
-        model.removePicture(idx)
-    }
 
     private fun createDialog() {
         dialogForBackBtn = AlertDialog.Builder(this)
@@ -248,4 +260,20 @@ class CrudActivity : AppCompatActivity() {
                 }
                 .setNegativeButton(R.string.crud_delete_dialog_negative) { _, _ -> }.create()
     }
+
+    fun removePicture(uri: String) {
+        model.removePicture(uri)
+    }
+
+    fun clickDeleteBtn(view: View) {
+        model.removePicture(view.tag as Int)
+    }
+
+    fun clickImage(view: View) {
+        startActivityForResult(Intent(this, BigImageActivity::class.java).apply {
+            putExtra("imageList", imageList.value!!.toTypedArray())
+            putExtra("idx", view.tag as Int)
+        }, requestBigImageActivity)
+    }
+
 }

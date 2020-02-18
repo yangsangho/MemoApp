@@ -1,18 +1,14 @@
 package kr.yangbob.memoapp.view
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.ListItemImageBinding
-import kr.yangbob.memoapp.viewmodel.CrudViewModel
 
-class ImageListAdapter(private val model: CrudViewModel) : RecyclerView.Adapter<ImageViewHolder>() {
+class ImageListAdapter(private val activity: CrudActivity) : RecyclerView.Adapter<ImageViewHolder>() {
     private var imageList: List<String> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -22,15 +18,15 @@ class ImageListAdapter(private val model: CrudViewModel) : RecyclerView.Adapter<
                 parent,
                 false
         )
-        binding.model = model
-        binding.lifecycleOwner = binding.root.context as LifecycleOwner
+        binding.activity = activity
+        binding.lifecycleOwner = activity
         return ImageViewHolder(binding)
     }
 
     override fun getItemCount(): Int = imageList.size
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.onBind(imageList[position])
+        holder.onBind(imageList[position], position)
     }
 
     fun updateList(newImageList: List<String>) {
@@ -43,20 +39,10 @@ class ImageListAdapter(private val model: CrudViewModel) : RecyclerView.Adapter<
 }
 
 class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
-    private lateinit var uri: String
-
-    fun onBind(uri: String) {
+    fun onBind(uri: String, position: Int) {
         binding.uri = uri
-        binding.holder = this
-        this.uri = uri
-    }
-
-    fun clickImage(view: View) {
-        Log.i("TEST", "Click Image")
-    }
-
-    fun clickDelete(view: View) {
-        (view.context as CrudActivity).removePicture(adapterPosition)
+        binding.deleteBtn.tag = position
+        binding.image.tag = position
     }
 }
 

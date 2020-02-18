@@ -20,7 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutDescription="@xml/scene_main"
-        tools:context=".view.MainActivity">
+        tools:context=".view.MainActivity"
+        tools:showPaths="true">
 
         <LinearLayout
             android:id="@+id/startTitleLayout"
@@ -37,12 +38,11 @@
                 android:textSize="@dimen/app_bar_title_size" />
 
             <TextView
-                android:id="@+id/noteCntText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{@plurals/main_appbar_cnt_memo(cntMemo, cntMemo)}"
                 android:textColor="@color/black"
-                tools:text="노트 1개" />
+                tools:text="메모 1장" />
         </LinearLayout>
 
         <androidx.appcompat.widget.Toolbar
