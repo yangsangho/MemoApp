@@ -8,15 +8,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.ListItemImageBinding
 
-class ImageListAdapter : RecyclerView.Adapter<ImageViewHolder>() {
+class ImageListAdapter(val canDelete: LiveData<Boolean>) : RecyclerView.Adapter<ImageViewHolder>() {
     private var imageList: List<String> = listOf()
-    val canDelete = MutableLiveData<Boolean>(true)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding = DataBindingUtil.inflate<ListItemImageBinding>(
@@ -51,10 +50,6 @@ class ImageListAdapter : RecyclerView.Adapter<ImageViewHolder>() {
         }
         imageList = newImageList
         diffResult.dispatchUpdatesTo(this)
-    }
-
-    fun setCanDelete(value: Boolean) {
-        canDelete.value = value
     }
 }
 

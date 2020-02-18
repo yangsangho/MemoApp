@@ -3,9 +3,15 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="cntNotes"
+            name="cntMemo"
             type="Integer" />
+
+        <variable
+            name="model"
+            type="kr.yangbob.memoapp.viewmodel.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -34,7 +40,7 @@
                 android:id="@+id/noteCntText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@plurals/main_appbar_notes(cntNotes, cntNotes)}"
+                android:text="@{@plurals/main_appbar_cnt_memo(cntMemo, cntMemo)}"
                 android:textColor="@color/black"
                 tools:text="노트 1개" />
         </LinearLayout>
@@ -60,10 +66,10 @@
                 app:spanCount="2" />
 
             <LinearLayout
-                android:id="@+id/noItemMsgLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="@{model.isNoItem ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

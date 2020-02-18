@@ -21,6 +21,8 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     val title = MutableLiveData<String>()
     val body = MutableLiveData<String>()
     private val imageList = MutableLiveData<List<String>>()
+    private val _canDelete = MutableLiveData<Boolean>(true)
+    val canDelete: LiveData<Boolean> = _canDelete
 
     init {
         resetData()
@@ -32,6 +34,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
 
         curMode = Mode.Detail
         curMenuId = R.menu.menu_detail
+        _canDelete.value = false
         memo = memoRepo.getMemoFromId(memoId)!!
         resetData()
     }
@@ -68,6 +71,9 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     fun removePicture(uri: String) {
         imageList.value = imageList.value!! - listOf(uri)
     }
+    fun removePicture(idx: Int) {
+//        imageList.value = imageList.value!! - listOf(uri)
+    }
 
     fun saveCameraImage() {
         pictureUtil.saveCameraImage()?.let { uri ->
@@ -78,9 +84,11 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     fun changeMode(mode: Mode) = if (mode == Mode.Detail) {
         curMode = Mode.Detail
         curMenuId = R.menu.menu_detail
+        _canDelete.value = false
     } else {
         curMode = Mode.Edit
         curMenuId = R.menu.menu_add_and_edit
+        _canDelete.value = true
     }
 
     fun isAddMode(): Boolean = curMode == Mode.Add

@@ -2,7 +2,6 @@ package kr.yangbob.memoapp.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -19,19 +18,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         binding.lifecycleOwner = this
-        binding.cntNotes = 0
+        binding.cntMemo = 0
+        binding.model = model
 
         setSupportActionBar(toolbar)
 
         val memoAdapter = MemoListAdapter()
         model.getMemoList().observe(this, Observer {
             memoAdapter.updateList(it)
-            binding.cntNotes = it.size
-            if(noItemMsgLayout.visibility == View.GONE && it.isEmpty()){
-                noItemMsgLayout.visibility = View.VISIBLE
-            } else if(noItemMsgLayout.visibility != View.GONE && it.isNotEmpty() ){
-                noItemMsgLayout.visibility = View.GONE
-            }
+            binding.cntMemo = it.size
+            model.setIsNoItem(it.isEmpty())
         })
         memoRecycler.adapter = memoAdapter
 

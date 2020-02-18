@@ -46,11 +46,10 @@ class CrudActivity : AppCompatActivity() {
         binding.model = model
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
-        imageListAdapter = ImageListAdapter()
+        imageListAdapter = ImageListAdapter(model.canDelete)
         if (memoId > 0) {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             model.getMemo(memoId)
-            imageListAdapter.setCanDelete(false)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_add)
             editTitle.requestFocus()
@@ -73,46 +72,8 @@ class CrudActivity : AppCompatActivity() {
         editBody.onFocusChangeListener = focusChangeListener
 
         imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        dialogForBackBtn = AlertDialog.Builder(this)
-                .setMessage(R.string.crud_chk_dialog_msg)
-                .setPositiveButton(R.string.crud_chk_dialog_positive) { _, _ ->
-                    model.saveData()
-                    processAfterSave(isNotSave = false)
-                }
-                .setNegativeButton(R.string.crud_chk_dialog_negative) { _, _ ->
-                    processAfterSave(isNotSave = true)
-                }
-                .create()
 
-
-        val inputUrlLayout = layoutInflater.inflate(R.layout.dialog_input_url, null)
-        val inputUrl = inputUrlLayout.findViewById<EditText>(R.id.inputUrl)
-        dialogForInputUrl = AlertDialog.Builder(this)
-                .setMessage(R.string.crud_url_dialog_msg)
-                .setView(inputUrlLayout)
-                .setPositiveButton(R.string.crud_url_dialog_positive) { _, _ ->
-                    val url = inputUrl.text.toString()
-                    inputUrl.setText("")
-
-                    if (URLUtil.isHttpsUrl(url)) {
-                        model.addPicture(url)
-                    } else if (URLUtil.isHttpUrl(url)) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                            Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
-                        else model.addPicture(url)
-                    } else {
-                        Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
-                    }
-                }
-                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }.create()
-
-        dialogForDelete = AlertDialog.Builder(this)
-                .setMessage(R.string.crud_delete_dialog_msg)
-                .setPositiveButton(R.string.crud_delete_dialog_positive) { _, _ ->
-                    model.deleteMemo()
-                    finish()
-                }
-                .setNegativeButton(R.string.crud_delete_dialog_negative) { _, _ -> }.create()
+        createDialog()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -221,7 +182,6 @@ class CrudActivity : AppCompatActivity() {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             editTitle.clearFocus()
             editBody.clearFocus()
-            imageListAdapter.setCanDelete(false)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_edit)
             val editText: EditText = if (focusView == null) editTitle
@@ -229,12 +189,57 @@ class CrudActivity : AppCompatActivity() {
 
             editText.requestFocus()
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-            imageListAdapter.setCanDelete(true)
         }
         invalidateOptionsMenu()
     }
 
     fun removePicture(uri: String) {
         model.removePicture(uri)
+    }
+    fun removePicture(idx: Int) {
+        model.removePicture(idx)
+    }
+
+    private fun createDialog(){
+        dialogForBackBtn = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_chk_dialog_msg)
+                .setPositiveButton(R.string.crud_chk_dialog_positive) { _, _ ->
+                    model.saveData()
+                    processAfterSave(isNotSave = false)
+                }
+                .setNegativeButton(R.string.crud_chk_dialog_negative) { _, _ ->
+                    processAfterSave(isNotSave = true)
+                }
+                .create()
+
+
+        val inputUrlLayout = layoutInflater.inflate(R.layout.dialog_input_url, null)
+        val inputUrl = inputUrlLayout.findViewById<EditText>(R.id.inputUrl)
+        dialogForInputUrl = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_url_dialog_msg)
+                .setView(inputUrlLayout)
+                .setPositiveButton(R.string.crud_url_dialog_positive) { _, _ ->
+                    val url = inputUrl.text.toString()
+                    inputUrl.setText("")
+
+                    if (URLUtil.isHttpsUrl(url)) {
+                        model.addPicture(url)
+                    } else if (URLUtil.isHttpUrl(url)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                            Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
+                        else model.addPicture(url)
+                    } else {
+                        Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
+                    }
+                }
+                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }.create()
+
+        dialogForDelete = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_delete_dialog_msg)
+                .setPositiveButton(R.string.crud_delete_dialog_positive) { _, _ ->
+                    model.deleteMemo()
+                    finish()
+                }
+                .setNegativeButton(R.string.crud_delete_dialog_negative) { _, _ -> }.create()
     }
 }
