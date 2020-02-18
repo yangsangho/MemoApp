@@ -5,16 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.ListItemImageBinding
+import kr.yangbob.memoapp.viewmodel.CrudViewModel
 
-class ImageListAdapter(val canDelete: LiveData<Boolean>) : RecyclerView.Adapter<ImageViewHolder>() {
+class ImageListAdapter(private val model: CrudViewModel) : RecyclerView.Adapter<ImageViewHolder>() {
     private var imageList: List<String> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -24,7 +22,8 @@ class ImageListAdapter(val canDelete: LiveData<Boolean>) : RecyclerView.Adapter<
                 parent,
                 false
         )
-        binding.adapter = this
+        binding.model = model
+        binding.lifecycleOwner = binding.root.context as LifecycleOwner
         return ImageViewHolder(binding)
     }
 
@@ -32,16 +31,6 @@ class ImageListAdapter(val canDelete: LiveData<Boolean>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.onBind(imageList[position])
-    }
-
-    override fun onViewAttachedToWindow(holder: ImageViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.markAttach()
-    }
-
-    override fun onViewDetachedFromWindow(holder: ImageViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.markDetach()
     }
 
     fun updateList(newImageList: List<String>) {
@@ -53,14 +42,8 @@ class ImageListAdapter(val canDelete: LiveData<Boolean>) : RecyclerView.Adapter<
     }
 }
 
-class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
     private lateinit var uri: String
-    private val lifecycleRegistry = LifecycleRegistry(this)
-
-    init {
-        binding.lifecycleOwner = this
-        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-    }
 
     fun onBind(uri: String) {
         binding.uri = uri
@@ -69,24 +52,11 @@ class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.
     }
 
     fun clickImage(view: View) {
-
         Log.i("TEST", "Click Image")
     }
 
     fun clickDelete(view: View) {
         (view.context as CrudActivity).removePicture(adapterPosition)
-    }
-
-    fun markAttach() {
-        lifecycleRegistry.currentState = Lifecycle.State.STARTED
-    }
-
-    fun markDetach() {
-        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-    }
-
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
     }
 }
 

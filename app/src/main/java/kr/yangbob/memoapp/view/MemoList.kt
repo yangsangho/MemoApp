@@ -12,7 +12,7 @@ import kr.yangbob.memoapp.databinding.ListItemMemoBinding
 import kr.yangbob.memoapp.db.Memo
 import kr.yangbob.memoapp.db.checkEqual
 
-class MemoListAdapter() : RecyclerView.Adapter<MemoViewHolder>() {
+class MemoListAdapter: RecyclerView.Adapter<MemoViewHolder>() {
     private var memoList: List<Memo> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {

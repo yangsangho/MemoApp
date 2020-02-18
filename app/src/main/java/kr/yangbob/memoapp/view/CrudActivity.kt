@@ -46,17 +46,18 @@ class CrudActivity : AppCompatActivity() {
         binding.model = model
 
         val memoId: Int = intent.getIntExtra("memoId", -1)
-        imageListAdapter = ImageListAdapter(model.getCanDelete())
+        model.getMemo(memoId)
         if (memoId > 0) {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
-            model.getMemo(memoId)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_add)
             editTitle.requestFocus()
         }
 
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        imageListAdapter = ImageListAdapter(model)
         imageRecycler.adapter = imageListAdapter
         model.getImageList().observe(this, Observer {
             imageListAdapter.updateList(it.toList())
@@ -138,6 +139,10 @@ class CrudActivity : AppCompatActivity() {
             dialogForDelete.show()
             true
         }
+        android.R.id.home -> {
+            onBackPressed()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -171,7 +176,6 @@ class CrudActivity : AppCompatActivity() {
         } else {
             if (isNotSave) model.resetData()
             changeModeTo(Mode.Detail)
-            imm.hideSoftInputFromWindow(editTitle.windowToken, 0)
         }
     }
 
@@ -182,6 +186,7 @@ class CrudActivity : AppCompatActivity() {
             toolbar.setTitle(R.string.crud_appbar_title_detail)
             editTitle.clearFocus()
             editBody.clearFocus()
+            imm.hideSoftInputFromWindow(editTitle.windowToken, 0)
         } else {
             toolbar.setTitle(R.string.crud_appbar_title_edit)
             val editText: EditText = if (focusView == null) editTitle
@@ -196,11 +201,12 @@ class CrudActivity : AppCompatActivity() {
     fun removePicture(uri: String) {
         model.removePicture(uri)
     }
+
     fun removePicture(idx: Int) {
         model.removePicture(idx)
     }
 
-    private fun createDialog(){
+    private fun createDialog() {
         dialogForBackBtn = AlertDialog.Builder(this)
                 .setMessage(R.string.crud_chk_dialog_msg)
                 .setPositiveButton(R.string.crud_chk_dialog_positive) { _, _ ->

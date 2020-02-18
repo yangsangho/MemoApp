@@ -15,6 +15,12 @@ data class Memo(
 fun Memo.isNull(): Boolean = title.isBlank() || text.isBlank() || images.isEmpty()
 
 fun Memo.checkEqual(chkTitle: String, chkText: String, chkPictures: List<String>): Boolean =
-        (title == chkTitle) && (text == chkText) && (images == chkPictures)
+        (title == chkTitle) && (text == chkText) && (images.deepEquals(chkPictures))
+
 fun Memo.checkEqual(other: Memo): Boolean =
-        (title == other.title) && (text == other.text) && (images == other.images)
+        (title == other.title) && (text == other.text) && (images.deepEquals(other.images))
+
+fun List<String>.deepEquals(other: List<String>): Boolean {
+    if (this.size == other.size) return this.mapIndexed { idx, str -> str == other[idx] }.all { it }
+    return false
+}

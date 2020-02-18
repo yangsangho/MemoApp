@@ -61,6 +61,7 @@ object BindingAdapters {
     fun setThumbnail(view: ImageView, imageList: List<String>) {
         if (imageList.isEmpty()) view.visibility = View.GONE
         else {
+            if(view.visibility == View.GONE) view.visibility = View.VISIBLE
             Glide.with(view.context).load(imageList.first())
                     .error(R.drawable.ic_img_load_error)
                     .placeholder(R.drawable.ic_img_loading)
