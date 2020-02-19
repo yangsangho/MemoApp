@@ -82,6 +82,9 @@ class CrudActivity : AppCompatActivity() {
         }
         val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus && model.isDetailMode()) changeModeTo(Mode.Edit, v)
+            (v as EditText).also {
+                it.setSelection(it.text.length)
+            }
         }
         editTitle.onFocusChangeListener = focusChangeListener
         editBody.onFocusChangeListener = focusChangeListener
