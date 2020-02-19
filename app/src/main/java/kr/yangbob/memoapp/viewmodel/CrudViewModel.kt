@@ -21,6 +21,8 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     private val canDelete = MutableLiveData<Boolean>()
     private val imageList = MutableLiveData<MutableList<String>>(mutableListOf())
     private val _isNoItem = MutableLiveData<Boolean>()
+
+    var lastActionIsAdd = false
     val isNoItem: LiveData<Boolean> = _isNoItem
     val title = MutableLiveData<String>()
     val body = MutableLiveData<String>()
@@ -99,6 +101,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     private fun chkNullInputData(): Boolean = title.value!!.isBlank() && body.value!!.isBlank() && imageList.value!!.isEmpty()
 
     private fun MutableLiveData<MutableList<String>>.add(item: String) {
+        lastActionIsAdd = true
         if(_isNoItem.value!!) _isNoItem.value = false
         this.value?.add(item)
         this.value = this.value
@@ -110,6 +113,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     }
 
     private fun MutableLiveData<MutableList<String>>.remove(item: String) {
+        lastActionIsAdd = false
         this.value?.remove(item)
         if(this.value!!.isEmpty()){
             _isNoItem.value = true
@@ -118,6 +122,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     }
 
     private fun MutableLiveData<MutableList<String>>.remove(idx: Int) {
+        lastActionIsAdd = false
         this.value?.removeAt(idx)
         if(this.value!!.isEmpty()){
             _isNoItem.value = true

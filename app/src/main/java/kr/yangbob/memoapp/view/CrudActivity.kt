@@ -45,8 +45,6 @@ class CrudActivity : AppCompatActivity() {
     private lateinit var dialogForDelete: AlertDialog
     private lateinit var imm: InputMethodManager
 
-    private var preventInitScroll = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityCrudBinding>(this, R.layout.activity_crud)
@@ -72,11 +70,11 @@ class CrudActivity : AppCompatActivity() {
         imageRecycler.adapter = imageListAdapter
         imageList.observe(this, Observer {
             imageListAdapter.updateList(it.toList())
-            if(preventInitScroll){
-                if(it.size > 2){
+            if (model.lastActionIsAdd) {
+                if (it.size > 1) {
                     imageRecycler.layoutManager?.scrollToPosition(it.size - 1)
                 }
-            } else preventInitScroll = true
+            }
         })
 
         writeLayoutLinear.setOnClickListener {
@@ -175,7 +173,12 @@ class CrudActivity : AppCompatActivity() {
                     model.saveCameraImage()
                 }
                 requestBigImageActivity -> {
-                    imageRecycler.layoutManager?.scrollToPosition(data?.getIntExtra("idx", 0) ?: 0)
+                    data?.getStringArrayExtra("deleteList")?.also {
+                        it.forEach { uri -> model.removePicture(uri) }
+                    }
+                    data?.getIntExtra("idx", 0)?.also {
+                        imageRecycler.layoutManager?.scrollToPosition(it)
+                    }
                 }
             }
         }
@@ -193,7 +196,10 @@ class CrudActivity : AppCompatActivity() {
         if (model.isAddMode()) {
             finish()
         } else {
-            if (isNotSave) model.resetData()
+            if (isNotSave) {
+                model.resetData()
+                imageRecycler.layoutManager?.scrollToPosition(0)
+            }
             changeModeTo(Mode.Detail)
         }
     }
@@ -273,6 +279,7 @@ class CrudActivity : AppCompatActivity() {
         startActivityForResult(Intent(this, BigImageActivity::class.java).apply {
             putExtra("imageList", imageList.value!!.toTypedArray())
             putExtra("idx", view.tag as Int)
+            putExtra("isDetailMode", model.isDetailMode())
         }, requestBigImageActivity)
     }
 
