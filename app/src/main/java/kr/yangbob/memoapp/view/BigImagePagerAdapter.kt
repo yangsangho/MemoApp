@@ -5,12 +5,16 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.PagerItemBigImageBinding
 
 class BigImagePagerAdapter(private var imageList: List<String>, private val activity: BigImageActivity) : RecyclerView.Adapter<BigImageViewHolder>() {
+    private val glideRequestManager = Glide.with(activity)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BigImageViewHolder {
         val binding: PagerItemBigImageBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.pager_item_big_image, parent, false)
+        binding.requestManager = glideRequestManager
         binding.bigImage.setOnClickListener {
             activity.toggleSystemUi()
         }
