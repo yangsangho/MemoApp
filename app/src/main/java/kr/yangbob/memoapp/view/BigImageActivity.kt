@@ -65,9 +65,4 @@ class BigImageActivity : AppCompatActivity() {
         }
         window.decorView.systemUiVisibility = newUiOption
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("TEST", "BigImageActivity Destroyed")
-    }
 }

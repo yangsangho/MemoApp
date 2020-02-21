@@ -19,13 +19,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         binding.lifecycleOwner = this
-        binding.cntMemo = 0
         binding.model = model
 
         setSupportActionBar(toolbar)
 
         val memoAdapter = MemoListAdapter()
         model.getMemoList().observe(this, Observer {
+            Log.i("TEST", "observe")
             memoAdapter.updateList(it)
             binding.cntMemo = it.size
             model.setIsNoItem(it.isEmpty())

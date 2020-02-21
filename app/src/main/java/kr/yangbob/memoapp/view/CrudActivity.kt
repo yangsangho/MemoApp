@@ -286,9 +286,4 @@ class CrudActivity : AppCompatActivity() {
             putExtra("isDetailMode", model.isDetailMode())
         }, requestBigImageActivity)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("TEST", "BigImageActivity Destroyed")
-    }
 }
