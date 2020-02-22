@@ -24,9 +24,9 @@
         app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="?attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
             android:padding="16dp">
 
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:textColor="@color/black"
                 android:textSize="@dimen/memo_list_title_size"
                 android:textStyle="bold"
@@ -48,9 +48,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textSize="@dimen/memo_list_body_size"
                 android:ellipsize="end"
-                android:maxLines="4"
+                android:maxLines="3"
+                android:textSize="@dimen/memo_list_body_size"
                 app:layout_constraintBottom_toTopOf="@id/thumbnail"
                 app:layout_constraintTop_toBottomOf="@id/noteTitle"
                 app:setBody="@{memo.body}"

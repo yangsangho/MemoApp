@@ -3,9 +3,9 @@ package kr.yangbob.memoapp.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_big_image.*
 import kr.yangbob.memoapp.R
 
@@ -33,7 +33,7 @@ class BigImageActivity : AppCompatActivity() {
         else {
             deleteBtn.setOnClickListener {
                 deleteList.add(imageList.removeAt(viewpager.currentItem))
-                if(imageList.isEmpty()) onBackPressed()
+                if (imageList.isEmpty()) onBackPressed()
                 else pagerAdapter.updateList(imageList.toList())
             }
         }
@@ -45,8 +45,8 @@ class BigImageActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK, Intent().apply {
-            if(imageList.isNotEmpty()) putExtra("idx", viewpager.currentItem)
-            if(deleteList.isNotEmpty()) putExtra("deleteList", deleteList.toTypedArray())
+            if (imageList.isNotEmpty()) putExtra("idx", viewpager.currentItem)
+            if (deleteList.isNotEmpty()) putExtra("deleteList", deleteList.toTypedArray())
         })
         super.onBackPressed()
     }
@@ -64,5 +64,10 @@ class BigImageActivity : AppCompatActivity() {
             if (!isDetailMode) bottomBar.visibility = View.GONE
         }
         window.decorView.systemUiVisibility = newUiOption
+    }
+
+    override fun onDestroy() {
+        Glide.get(this).clearMemory()
+        super.onDestroy()
     }
 }

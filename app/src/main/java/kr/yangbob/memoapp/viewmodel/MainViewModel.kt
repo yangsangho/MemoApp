@@ -8,12 +8,12 @@ import kr.yangbob.memoapp.repo.MemoRepo
 
 class MainViewModel(private val memoRepo: MemoRepo) : ViewModel() {
 
-    private val memoList: LiveData<List<Memo>> = memoRepo.getAllMemoLD()
+    private val memoList: LiveData<List<Memo>> = memoRepo.getAllMemo()
     private val _isNoItem = MutableLiveData<Boolean>(false)
     val isNoItem: LiveData<Boolean> = _isNoItem
 
     fun getMemoList() = memoList
     fun setIsNoItem(value: Boolean) {
-        if(value != _isNoItem.value) _isNoItem.value = value
+        if (value != _isNoItem.value) _isNoItem.value = value
     }
 }

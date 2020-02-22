@@ -19,10 +19,12 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/border_bottom"
             app:layout_constraintBottom_toTopOf="@id/writeLayout"
+            app:layout_constraintEnd_toStartOf="@id/imageRecycler"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:titleTextAppearance="@style/TitleTextAppearance" />
 
@@ -49,6 +51,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="@string/crud_title_hint"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:text="@={model.title}"
                     android:textSize="@dimen/title_text_size"
@@ -76,7 +79,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/writeLayout"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,7 +89,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/writeLayout"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

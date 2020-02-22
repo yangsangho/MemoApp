@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,6 +21,7 @@ import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_crud.*
 import kr.yangbob.memoapp.Mode
 import kr.yangbob.memoapp.R
@@ -45,6 +46,13 @@ class CrudActivity : AppCompatActivity() {
     private lateinit var dialogForInputUrl: AlertDialog
     private lateinit var dialogForDelete: AlertDialog
     private lateinit var imm: InputMethodManager
+
+    private val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+        if (hasFocus && model.isDetailMode()) changeModeTo(Mode.Edit, v)
+        (v as EditText).also {
+            it.setSelection(it.text.length)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +88,6 @@ class CrudActivity : AppCompatActivity() {
 
         writeLayoutLinear.setOnClickListener {
             editBody.requestFocus()
-        }
-        val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-            if (hasFocus && model.isDetailMode()) changeModeTo(Mode.Edit, v)
-            (v as EditText).also {
-                it.setSelection(it.text.length)
-            }
         }
         editTitle.onFocusChangeListener = focusChangeListener
         editBody.onFocusChangeListener = focusChangeListener
@@ -247,16 +249,22 @@ class CrudActivity : AppCompatActivity() {
                 .setMessage(R.string.crud_url_dialog_msg)
                 .setView(inputUrlLayout)
                 .setPositiveButton(R.string.crud_url_dialog_positive) { _, _ ->
-                    val url = inputUrl.text.toString()
+                    var url = inputUrl.text.toString()
                     inputUrl.setText("")
 
-                    if (URLUtil.isHttpsUrl(url)) {
-                        model.addPicture(url)
-                    } else if (URLUtil.isHttpUrl(url)) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                            Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
-                        else model.addPicture(url)
-                    } else {
+                    if(!URLUtil.isHttpsUrl(url) && !URLUtil.isHttpUrl(url)){
+                       url = "https://$url"
+                    }
+
+                    if(Patterns.WEB_URL.matcher(url).matches()){
+                        if (URLUtil.isHttpsUrl(url)) {
+                            model.addPicture(url)
+                        } else if (URLUtil.isHttpUrl(url)) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                                Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
+                            else model.addPicture(url)
+                        }
+                    } else{
                         Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
                     }
                 }
@@ -271,19 +279,20 @@ class CrudActivity : AppCompatActivity() {
                 .setNegativeButton(R.string.crud_delete_dialog_negative) { _, _ -> }.create()
     }
 
-    fun removePicture(uri: String) {
-        model.removePicture(uri)
+    fun removePicture(idx: Int) {
+        model.removePicture(idx)
     }
 
-    fun clickDeleteBtn(view: View) {
-        model.removePicture(view.tag as Int)
-    }
-
-    fun clickImage(view: View) {
+    fun startBigImage(idx: Int) {
         startActivityForResult(Intent(this, BigImageActivity::class.java).apply {
             putExtra("imageList", imageList.value!!.toTypedArray())
-            putExtra("idx", view.tag as Int)
+            putExtra("idx", idx)
             putExtra("isDetailMode", model.isDetailMode())
         }, requestBigImageActivity)
+    }
+
+    override fun onDestroy() {
+        Glide.get(this).clearMemory()
+        super.onDestroy()
     }
 }

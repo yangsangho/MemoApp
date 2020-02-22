@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
 
         val memoAdapter = MemoListAdapter()
         model.getMemoList().observe(this, Observer {
-            Log.i("TEST", "observe")
             memoAdapter.updateList(it)
             binding.cntMemo = it.size
             model.setIsNoItem(it.isEmpty())

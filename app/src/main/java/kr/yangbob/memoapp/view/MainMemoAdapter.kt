@@ -36,17 +36,19 @@ class MemoListAdapter : RecyclerView.Adapter<MemoViewHolder>() {
 }
 
 class MemoViewHolder(private val binding: ListItemMemoBinding) : RecyclerView.ViewHolder(binding.root) {
-    private val context = binding.root.context
     private lateinit var memo: Memo
+
+    init {
+        binding.holder = this
+    }
 
     fun bind(memo: Memo) {
         binding.memo = memo
-        binding.holder = this
         this.memo = memo
     }
 
     fun clickMemo(view: View) {
-        context.startActivity(Intent(context, CrudActivity::class.java).apply {
+        view.context.startActivity(Intent(view.context, CrudActivity::class.java).apply {
             putExtra("memoId", memo.id)
         })
     }

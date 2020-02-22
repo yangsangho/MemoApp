@@ -10,15 +10,25 @@
             type="String" />
 
         <variable
+            name="holder"
+            type="kr.yangbob.memoapp.view.ImageViewHolder" />
+
+        <variable
+            name="requestManager"
+            type="com.bumptech.glide.RequestManager" />
+
+        <variable
             name="activity"
             type="kr.yangbob.memoapp.view.CrudActivity" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="@dimen/image_list_size"
         android:layout_height="@dimen/image_list_size"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{holder::clickImage}"
         android:paddingStart="2dp"
         android:paddingTop="2dp"
         android:paddingEnd="2dp">
@@ -27,13 +37,8 @@
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:onClick="@{activity::clickImage}"
             android:scaleType="centerCrop"
-            android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:setRequestManager="@{requestManager}"
             app:setUriSmall="@{uri}"
             tools:srcCompat="@drawable/ic_launcher_background" />
 
@@ -41,13 +46,11 @@
             android:id="@+id/deleteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            android:layout_margin="4dp"
             android:background="@android:color/transparent"
-            android:onClick="@{activity::clickDeleteBtn}"
+            android:onClick="@{holder::clickImageDeleteBtn}"
             android:scaleType="fitCenter"
             android:visibility="@{activity.canDelete ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_remove_circle_24dp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

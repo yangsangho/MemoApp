@@ -30,10 +30,10 @@ class PictureUtil(context: Context) {
         }
     }
 
-    fun saveCameraImage(): Uri?{
+    fun saveCameraImage(): Uri? {
         var uri: Uri? = null
-        currentPhotoPath?.let {path->
-            File(path).let {file ->
+        currentPhotoPath?.let { path ->
+            File(path).let { file ->
                 uri = insert(file)
                 file.delete()
             }

@@ -6,18 +6,18 @@
         <variable
             name="uri"
             type="String" />
+
         <variable
             name="requestManager"
             type="com.bumptech.glide.RequestManager" />
     </data>
 
-    <ImageView
-        android:id="@+id/bigImage"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bigImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:setUriBig="@{uri}"
-        app:setRequestManager="@{requestManager}"/>
+        app:setRequestManager="@{requestManager}"
+        app:setUriBig="@{uri}" />
 </layout>
 

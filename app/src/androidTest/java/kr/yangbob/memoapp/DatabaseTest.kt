@@ -3,9 +3,11 @@ package kr.yangbob.memoapp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kr.yangbob.memoapp.db.Memo
+import kr.yangbob.memoapp.db.MemoDao
 import kr.yangbob.memoapp.db.MemoDatabase
-import kr.yangbob.memoapp.repo.MemoRepo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,7 +22,7 @@ import java.io.IOException
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest : KoinTest {
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val memoRepo: MemoRepo by inject()
+    private lateinit var memoDao: MemoDao
     private val db: MemoDatabase by inject()
     private val testId = 3
     private val testMemo = Memo("title", "body", mutableListOf("content://media/external/images/media/4172", "http://url.com"), testId)
@@ -32,6 +34,7 @@ class DatabaseTest : KoinTest {
             androidContext(appContext)
             modules(listOf(viewModelModule, testDbModule))
         }
+        memoDao = db.getMemoDao()
     }
 
     @After
@@ -43,27 +46,27 @@ class DatabaseTest : KoinTest {
 
     @Test
     fun insertAndGetTest() {
-        val nullMemo = memoRepo.getMemoFromId(testId)
-        assertThat(nullMemo).isNull()
+        GlobalScope.launch {
+            val nullMemo = memoDao.getFromId(testId)
+            assertThat(nullMemo).isNull()
 
-        memoRepo.insertMemo(testMemo)
 
-        val memoList = memoRepo.getAllMemo()
-        assertThat(memoList[0]).isEqualTo(testMemo)
-
-        val getMemo = memoRepo.getMemoFromId(testId)
-        assertThat(getMemo).isEqualTo(testMemo)
+            val getMemo = memoDao.getFromId(testId)
+            assertThat(getMemo).isEqualTo(testMemo)
+        }
     }
 
     @Test
     fun deleteTest() {
-        memoRepo.insertMemo(testMemo)
+        GlobalScope.launch {
+            memoDao.insert(testMemo)
 
-        val getMemo = memoRepo.getMemoFromId(testId)
-        assertThat(getMemo).isNotNull()
+            val getMemo = memoDao.getFromId(testId)
+            assertThat(getMemo).isNotNull()
 
-        memoRepo.deleteMemo(getMemo!!)
-        val newGetMemo = memoRepo.getMemoFromId(testId)
-        assertThat(newGetMemo).isNull()
+            memoDao.delete(getMemo!!)
+            val newGetMemo = memoDao.getFromId(testId)
+            assertThat(newGetMemo).isNull()
+        }
     }
 }

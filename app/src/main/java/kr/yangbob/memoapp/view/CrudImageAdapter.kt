@@ -1,15 +1,19 @@
 package kr.yangbob.memoapp.view
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.ListItemImageBinding
 
 class ImageListAdapter(private val activity: CrudActivity) : RecyclerView.Adapter<ImageViewHolder>() {
     private var imageList: List<String> = listOf()
+    private val glideRequestManager = Glide.with(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding = DataBindingUtil.inflate<ListItemImageBinding>(
@@ -18,15 +22,16 @@ class ImageListAdapter(private val activity: CrudActivity) : RecyclerView.Adapte
                 parent,
                 false
         )
-        binding.activity = activity
+        binding.requestManager = glideRequestManager
         binding.lifecycleOwner = activity
-        return ImageViewHolder(binding)
+        binding.activity = activity
+        return ImageViewHolder(binding, activity)
     }
 
     override fun getItemCount(): Int = imageList.size
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.onBind(imageList[position], position)
+        holder.onBind(imageList[position])
     }
 
     fun updateList(newImageList: List<String>) {
@@ -36,13 +41,32 @@ class ImageListAdapter(private val activity: CrudActivity) : RecyclerView.Adapte
         imageList = newImageList
         diffResult.dispatchUpdatesTo(this)
     }
+
+    override fun onViewRecycled(holder: ImageViewHolder) {
+        holder.clear(glideRequestManager)
+        super.onViewRecycled(holder)
+    }
 }
 
-class ImageViewHolder(private val binding: ListItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun onBind(uri: String, position: Int) {
+class ImageViewHolder(private val binding: ListItemImageBinding, private val activity: CrudActivity) : RecyclerView.ViewHolder(binding.root) {
+    init {
+        binding.holder = this
+    }
+
+    fun onBind(uri: String) {
         binding.uri = uri
-        binding.deleteBtn.tag = position
-        binding.image.tag = position
+    }
+
+    fun clear(requestManager: RequestManager) {
+        requestManager.clear(binding.image)
+    }
+
+    fun clickImageDeleteBtn(view: View) {
+        activity.removePicture(adapterPosition)
+    }
+
+    fun clickImage(view: View) {
+        activity.startBigImage(adapterPosition)
     }
 }
 
@@ -58,9 +82,4 @@ class ImageListDiffCallback(
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldImageList[oldItemPosition] == newImageList[newItemPosition]
-
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        // Implement method if you're going to use ItemAnimator
-        return super.getChangePayload(oldItemPosition, newItemPosition)
-    }
 }

@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import kr.yangbob.memoapp.R
 import kr.yangbob.memoapp.databinding.PagerItemBigImageBinding
 
@@ -34,10 +35,19 @@ class BigImagePagerAdapter(private var imageList: List<String>, private val acti
         imageList = newImageList
         diffResult.dispatchUpdatesTo(this)
     }
+
+    override fun onViewRecycled(holder: BigImageViewHolder) {
+        holder.clear(glideRequestManager)
+        super.onViewRecycled(holder)
+    }
 }
 
 class BigImageViewHolder(private val binding: PagerItemBigImageBinding) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(uri: String) {
         binding.uri = uri
+    }
+
+    fun clear(requestManager: RequestManager) {
+        requestManager.clear(binding.bigImage)
     }
 }
