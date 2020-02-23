@@ -23,17 +23,16 @@
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
+            android:padding="8dp"
             android:id="@+id/deleteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_delete_white_24dp" />
 
     </LinearLayout>
-
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"

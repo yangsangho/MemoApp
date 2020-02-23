@@ -72,6 +72,7 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
     fun createImageFile(): File = pictureUtil.createImageFile()
     fun addPicture(uri: Uri) = imageList.add(uri.toString())
     fun addPicture(url: String) = imageList.add(url)
+    fun modifyUrl(idx: Int, url: String) = imageList.replace(idx, url)
     fun removePicture(uri: String) = imageList.remove(uri)
     fun removePicture(idx: Int) = imageList.remove(idx)
 
@@ -128,5 +129,14 @@ class CrudViewModel(private val memoRepo: MemoRepo, private val pictureUtil: Pic
             _isNoItem.value = true
         }
         this.value = this.value
+    }
+
+    private fun MutableLiveData<MutableList<String>>.replace(idx: Int, url: String) {
+        this.value?.also {
+            if (it[idx] != url) {
+                it[idx] = url
+                this.value = this.value
+            }
+        }
     }
 }

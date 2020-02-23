@@ -39,4 +39,6 @@
     <string name="crud_delete_dialog_positive">Delete</string>
     <string name="crud_delete_dialog_negative">Cancel</string>
     <string name="crud_delete_dialog_msg">Do you want to delete the Memo?</string>
+    <string name="crud_url_dialog_edit_msg">Enter URL to modify.</string>
+    <string name="crud_url_dialog_edit_positive">Modify</string>
 </resources>

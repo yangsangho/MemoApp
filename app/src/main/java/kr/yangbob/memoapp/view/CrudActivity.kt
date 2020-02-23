@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
@@ -38,14 +39,18 @@ class CrudActivity : AppCompatActivity() {
     private val requestBigImageActivity = 3
 
     private val model: CrudViewModel by viewModel()
+    private val loadFailListForUrl = mutableListOf<String>()
     lateinit var canDelete: LiveData<Boolean>
     private lateinit var imageList: LiveData<MutableList<String>>
 
     private lateinit var imageListAdapter: ImageListAdapter
     private lateinit var dialogForBackBtn: AlertDialog
     private lateinit var dialogForInputUrl: AlertDialog
+    private lateinit var dialogForEditUrl: AlertDialog
     private lateinit var dialogForDelete: AlertDialog
     private lateinit var imm: InputMethodManager
+    private lateinit var urlEditText: EditText
+    private var urlEditIdx = 0
 
     private val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
         if (hasFocus && model.isDetailMode()) changeModeTo(Mode.Edit, v)
@@ -179,8 +184,8 @@ class CrudActivity : AppCompatActivity() {
                     model.saveCameraImage()
                 }
                 requestBigImageActivity -> {
-                    data?.getStringArrayExtra("deleteList")?.also {
-                        it.forEach { uri -> model.removePicture(uri) }
+                    data?.getIntArrayExtra("deleteIdxList")?.also {
+                        it.forEach { deleteIdx -> model.removePicture(deleteIdx) }
                     }
                     data?.getIntExtra("idx", 0)?.also {
                         imageRecycler.layoutManager?.scrollToPosition(it)
@@ -244,13 +249,13 @@ class CrudActivity : AppCompatActivity() {
 
 
         val inputUrlLayout = layoutInflater.inflate(R.layout.dialog_input_url, null)
-        val inputUrl = inputUrlLayout.findViewById<EditText>(R.id.inputUrl)
+        val urlInputText = inputUrlLayout.findViewById<EditText>(R.id.inputUrl)
         dialogForInputUrl = AlertDialog.Builder(this)
                 .setMessage(R.string.crud_url_dialog_msg)
                 .setView(inputUrlLayout)
                 .setPositiveButton(R.string.crud_url_dialog_positive) { _, _ ->
-                    var url = inputUrl.text.toString()
-                    inputUrl.setText("")
+                    var url = urlInputText.text.toString()
+                    urlInputText.setText("")
 
                     if(!URLUtil.isHttpsUrl(url) && !URLUtil.isHttpUrl(url)){
                        url = "https://$url"
@@ -263,6 +268,32 @@ class CrudActivity : AppCompatActivity() {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                                 Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
                             else model.addPicture(url)
+                        }
+                    } else{
+                        Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
+                    }
+                }
+                .setNegativeButton(R.string.crud_url_dialog_negative) { _, _ -> }.create()
+
+        val editUrlLayout = layoutInflater.inflate(R.layout.dialog_input_url, null)
+        urlEditText = editUrlLayout.findViewById(R.id.inputUrl)
+        dialogForEditUrl = AlertDialog.Builder(this)
+                .setMessage(R.string.crud_url_dialog_edit_msg)
+                .setView(editUrlLayout)
+                .setPositiveButton(R.string.crud_url_dialog_edit_positive) { _, _ ->
+                    var url = urlEditText.text.toString()
+
+                    if(!URLUtil.isHttpsUrl(url) && !URLUtil.isHttpUrl(url)){
+                        url = "https://$url"
+                    }
+
+                    if(Patterns.WEB_URL.matcher(url).matches()){
+                        if (URLUtil.isHttpsUrl(url)) {
+                            model.modifyUrl(urlEditIdx, url)
+                        } else if (URLUtil.isHttpUrl(url)) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                                Toast.makeText(this, R.string.crud_url_dialog_deny_http_msg, Toast.LENGTH_LONG).show()
+                            else model.modifyUrl(urlEditIdx, url)
                         }
                     } else{
                         Toast.makeText(this, R.string.crud_url_dialog_invalid, Toast.LENGTH_LONG).show()
@@ -284,11 +315,30 @@ class CrudActivity : AppCompatActivity() {
     }
 
     fun startBigImage(idx: Int) {
-        startActivityForResult(Intent(this, BigImageActivity::class.java).apply {
-            putExtra("imageList", imageList.value!!.toTypedArray())
-            putExtra("idx", idx)
-            putExtra("isDetailMode", model.isDetailMode())
-        }, requestBigImageActivity)
+        imageList.value?.also {
+            if(loadFailListForUrl.contains(it[idx])){
+                urlEditText.setText(it[idx])
+                urlEditIdx = idx
+                dialogForEditUrl.show()
+            } else {
+                startActivityForResult(Intent(this, BigImageActivity::class.java).apply {
+                    putExtra("imageList", it.toTypedArray())
+                    putExtra("idx", idx)
+                    putExtra("isDetailMode", model.isDetailMode())
+                }, requestBigImageActivity)
+            }
+        }
+    }
+
+    fun imageLoadFail(uri: String) {
+        if (URLUtil.isContentUrl(uri)) {
+            model.removePicture(uri)
+        } else {
+            loadFailListForUrl.add(uri)
+        }
+        if (model.isDetailMode()) {
+            if (model.hasChange()) model.saveData()
+        }
     }
 
     override fun onDestroy() {

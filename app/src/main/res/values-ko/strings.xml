@@ -39,4 +39,6 @@
     <string name="crud_delete_dialog_msg">메모를 삭제할까요?</string>
     <string name="crud_delete_dialog_negative">취소</string>
     <string name="crud_delete_dialog_positive">삭제</string>
+    <string name="crud_url_dialog_edit_msg">수정할 URL을 입력하세요.</string>
+    <string name="crud_url_dialog_edit_positive">수정</string>
 </resources>

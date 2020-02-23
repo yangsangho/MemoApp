@@ -3,6 +3,7 @@ package kr.yangbob.memoapp.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -15,7 +16,7 @@ class BigImageActivity : AppCompatActivity() {
             or View.SYSTEM_UI_FLAG_FULLSCREEN)
     private var isDetailMode = false
     private lateinit var imageList: MutableList<String>
-    private val deleteList = arrayListOf<String>()
+    private val deleteIdxList = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,9 @@ class BigImageActivity : AppCompatActivity() {
         if (isDetailMode) bottomBar.visibility = View.GONE
         else {
             deleteBtn.setOnClickListener {
-                deleteList.add(imageList.removeAt(viewpager.currentItem))
+                val deleteIdx = viewpager.currentItem
+                imageList.removeAt(deleteIdx)
+                deleteIdxList.add(deleteIdx)
                 if (imageList.isEmpty()) onBackPressed()
                 else pagerAdapter.updateList(imageList.toList())
             }
@@ -46,7 +49,7 @@ class BigImageActivity : AppCompatActivity() {
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK, Intent().apply {
             if (imageList.isNotEmpty()) putExtra("idx", viewpager.currentItem)
-            if (deleteList.isNotEmpty()) putExtra("deleteList", deleteList.toTypedArray())
+            if (deleteIdxList.isNotEmpty()) putExtra("deleteIdxList", deleteIdxList.toIntArray())
         })
         super.onBackPressed()
     }
