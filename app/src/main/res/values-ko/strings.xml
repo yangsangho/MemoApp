@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">메모 앱</string>
+    <string name="app_name">메모장</string>
     <string name="main_appbar_title">모든 메모</string>
     <string name="crud_no_image_msg">첨부파일이 없어요.</string>
     <string name="main_no_item_msg1">메모가 없어요.</string>

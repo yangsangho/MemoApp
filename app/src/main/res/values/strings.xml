@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MemoApp</string>
+    <string name="app_name">Memo</string>
     <string name="main_appbar_title">All memos</string>
     <string name="crud_no_image_msg">No Attachment</string>
     <string name="main_no_item_msg1">No memos</string>
